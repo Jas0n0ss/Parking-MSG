@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /view.html
+Allow: /
+
+Sitemap: https://car.msfts.org/sitemap.xml

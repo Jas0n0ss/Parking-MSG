@@ -1,53 +1,221 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>联系车主</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#F5F5F7,#E0E0E8);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;}
-    .card{
-      backdrop-filter:blur(14px);
-      background:rgba(255,255,255,0.85);
-      border-radius:32px;
-      box-shadow:0 12px 32px rgba(0,0,0,0.1);
-      text-align:center;
-      max-width:380px;
-      width:100%;
-      padding:32px 24px;
-      animation:fadeIn 0.5s ease forwards;
-    }
-    .plate{font-size:2.5rem;font-weight:700;color:#1C1C1E;margin-bottom:24px;}
-    .btn{
-      background:linear-gradient(90deg,#007AFF,#005BB5);
-      color:#fff;font-weight:600;font-size:18px;width:100%;padding:16px;border-radius:24px;transition:all 0.2s;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.12);
-    }
-    .btn:hover{opacity:0.9;transform:scale(1.02);}
-    .btn:active{transform:scale(0.97);}
-    @keyframes fadeIn{0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no">
+  <title>联系车主 · CarMsg 挪车码</title>
+  <meta name="description" content="通过 CarMsg 挪车码联系车主。号码仅保存在链接中，不经过服务器。">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="CarMsg 挪车码">
+  <meta name="theme-color" id="metaThemeColor" content="#f5f7fb">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'none'">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/view.css">
+  <script src="assets/js/theme.js"></script>
+  <script defer src="assets/js/common.js"></script>
+  <script defer src="assets/js/view.js"></script>
 </head>
 <body>
-  <div class="card">
-    <h1 class="text-2xl font-bold text-gray-900 mb-4">联系车主</h1>
-    <p class="text-gray-500 mb-2">车牌号</p>
-    <p id="plate" class="plate"></p>
-    <button id="callBtn" class="btn">📞 呼叫车主</button>
+  <a class="skip-link" href="#contactMain">跳到联系车主</a>
+
+  <div class="page-bg" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
   </div>
 
-  <script>
-    const params=new URLSearchParams(window.location.search);
-    const plate=params.get('plate');
-    const phone=params.get('phone');
+  <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 16.5v-3.1c0-.7.35-1.35.94-1.73l1.85-1.2 1.6-2.45A2.2 2.2 0 0 1 10.72 7h2.56a2.2 2.2 0 0 1 1.83.98l1.6 2.46 1.85 1.19c.6.38.94 1.04.94 1.73v3.14"/>
+      <path d="M4.5 12.8h15"/>
+      <circle cx="8" cy="17" r="1.7"/>
+      <circle cx="16" cy="17" r="1.7"/>
+    </symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6.6 3.5h2.2l1.4 4.2-2 1.4a13.5 13.5 0 0 0 6.7 6.7l1.4-2 4.2 1.4v2.2a2.6 2.6 0 0 1-2.8 2.6C10.3 19.3 4.7 13.7 4 6.3A2.6 2.6 0 0 1 6.6 3.5Z"/>
+    </symbol>
+    <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l.9-4.6A8.5 8.5 0 1 1 20.5 12Z"/>
+      <path d="M8 12h.01M12 12h.01M16 12h.01"/>
+    </symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="9" width="11" height="11" rx="2.5"/>
+      <path d="M5 15V6a2 2 0 0 1 2-2h9"/>
+    </symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="8" r="3.5"/>
+      <path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/>
+      <path d="M18.5 8v6M15.5 11h6"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m3 3 18 18"/>
+      <path d="M10.6 6.1A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a17.5 17.5 0 0 1-2.7 3.5"/>
+      <path d="M6.2 6.2A17.8 17.8 0 0 0 2.5 12S6 18 12 18a9.6 9.6 0 0 0 4.2-.95"/>
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4.5" y="10" width="15" height="10.5" rx="3"/>
+      <path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>
+      <path d="M12 14.5v2"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3.5 19 6v5.5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-2.5Z"/>
+      <path d="m8.8 12 2.1 2.1 4.3-4.3"/>
+    </symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 12h15"/><path d="m14 6.5 5.5 5.5-5.5 5.5"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5M12 16h.01"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14M5 12h14"/>
+    </symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M10.2 6.5C7.4 7.4 5.8 9.5 5.8 12.2V17h5.4v-5.2H8.5c.1-1.5 1-2.6 2.7-3.2l-1-2.1Zm8 0c-2.8.9-4.4 3-4.4 5.7V17h5.4v-5.2h-2.7c.1-1.5 1-2.6 2.7-3.2l-1-2.1Z"/>
+    </symbol>
+  </svg>
 
-    if(!plate||!phone){
-      document.body.innerHTML='<p class="text-center text-red-600 text-xl mt-10 px-4">参数缺失或非法，无法显示。</p>';
-    }else{
-      document.getElementById('plate').innerText=plate;
-      document.getElementById('callBtn').addEventListener('click',()=>{window.location.href=`tel:${phone}`;});
-    }
-  </script>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./">
+        <span class="brand-mark"><svg aria-hidden="true"><use href="#i-car"></use></svg></span>
+        <span class="brand-copy">
+          <span class="brand-name">CarMsg</span>
+          <span class="brand-sub">挪车二维码</span>
+        </span>
+        <span class="sr-only">首页</span>
+      </a>
+      <div class="header-actions">
+        <a class="header-cta" href="./" aria-label="我也要一张挪车码">
+          <svg aria-hidden="true"><use href="#i-plus"></use></svg>
+          <span>我也要一张</span>
+        </a>
+        <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false" title="切换到深色模式">
+          <svg class="icon-moon" aria-hidden="true"><use href="#i-moon"></use></svg>
+          <svg class="icon-sun" aria-hidden="true"><use href="#i-sun"></use></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="contact-main" id="contactMain">
+    <section class="contact-card" id="contactCard" aria-labelledby="contactTitle" hidden>
+      <svg class="contact-watermark" aria-hidden="true"><use href="#i-car"></use></svg>
+
+      <div class="contact-hero">
+        <h1 class="plate-hero" id="contactTitle"><span id="plateText">粤B12345</span></h1>
+        <p class="contact-sub">方便的话，请尽快联系车主挪车。</p>
+        <p class="contact-owner" id="ownerLine" hidden>车主：<strong id="ownerText"></strong></p>
+        <blockquote class="owner-note" id="noteBlock" hidden>
+          <svg aria-hidden="true"><use href="#i-quote"></use></svg>
+          <p id="noteText"></p>
+        </blockquote>
+      </div>
+
+      <div class="contact-divider" aria-hidden="true"></div>
+
+      <div class="phone-section">
+        <span class="phone-label">车主电话</span>
+        <div class="phone-row">
+          <span class="phone-text" id="phoneText" aria-live="polite">138 **** 5678</span>
+          <button class="phone-reveal" type="button" id="revealBtn" aria-label="显示完整号码" aria-pressed="false" title="显示完整号码">
+            <svg class="icon-eye" aria-hidden="true"><use href="#i-eye"></use></svg>
+            <svg class="icon-eye-off" aria-hidden="true"><use href="#i-eye-off"></use></svg>
+          </button>
+        </div>
+        <p class="phone-hint">为保护隐私，号码默认脱敏显示</p>
+      </div>
+
+      <a class="call-button" id="callBtn" href="#">
+        <span class="call-icon"><svg aria-hidden="true"><use href="#i-phone"></use></svg></span>
+        <span class="call-copy">
+          <strong>拨打电话</strong>
+          <small>直接呼叫车主</small>
+        </span>
+        <svg class="call-arrow" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      </a>
+
+      <div class="secondary-actions">
+        <a class="action-tile" id="smsBtn" href="#">
+          <svg aria-hidden="true"><use href="#i-message"></use></svg>
+          <span>发短信</span>
+        </a>
+        <button class="action-tile" type="button" id="copyBtn">
+          <svg aria-hidden="true"><use href="#i-copy"></use></svg>
+          <span>复制号码</span>
+        </button>
+        <button class="action-tile" type="button" id="vcardBtn">
+          <svg aria-hidden="true"><use href="#i-user-plus"></use></svg>
+          <span>存联系人</span>
+        </button>
+      </div>
+
+      <div class="sms-section">
+        <div class="sms-head">
+          <span>快捷短信</span>
+          <small>选一句，发送时自动填好</small>
+        </div>
+        <div class="sms-chips" id="smsChips" role="group" aria-label="短信模板">
+          <button class="sms-chip is-active" type="button" data-template="0" aria-pressed="true">挡住我了</button>
+          <button class="sms-chip" type="button" data-template="1" aria-pressed="false">占用车位</button>
+          <button class="sms-chip" type="button" data-template="2" aria-pressed="false">车窗未关</button>
+          <button class="sms-chip" type="button" data-template="3" aria-pressed="false">车灯未关</button>
+        </div>
+        <p class="sms-preview"><span class="sms-preview-label">短信内容</span><span id="smsPreviewText" aria-live="polite"></span></p>
+      </div>
+
+      <div class="contact-tips">
+        <svg aria-hidden="true"><use href="#i-shield"></use></svg>
+        <p><strong>请文明沟通。</strong>恶意骚扰、辱骂或频繁呼叫可能承担法律责任。本页面信息由车主自行提供。</p>
+      </div>
+    </section>
+
+    <section class="contact-card error-card" id="errorCard" aria-labelledby="errorTitle" hidden>
+      <span class="error-icon"><svg aria-hidden="true"><use href="#i-alert"></use></svg></span>
+      <h1 id="errorTitle">这个挪车码不完整</h1>
+      <p id="errorText">链接可能被截断，或参数已经失效。请让车主重新生成一张挪车码。</p>
+      <div class="error-actions">
+        <a class="btn btn-primary" href="./">
+          <svg aria-hidden="true"><use href="#i-car"></use></svg>生成我的挪车码
+        </a>
+        <a class="btn btn-ghost" href="./#guide">了解怎么贴</a>
+      </div>
+    </section>
+
+    <div class="contact-footer-note">
+      <svg aria-hidden="true"><use href="#i-lock"></use></svg>
+      <span>信息仅保存在链接中，不经过服务器</span>
+      <a href="./">免费生成挪车码</a>
+    </div>
+  </main>
+
+  <footer class="view-footer">
+    <div class="container">
+      <p>© <span data-year>2026</span> CarMsg 挪车码。用一点分寸感，让城市更顺畅。</p>
+      <p><a href="./#privacy">隐私说明</a></p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-card">请启用 JavaScript，才能读取车主的联系信息。</div>
+  </noscript>
 </body>
 </html>
