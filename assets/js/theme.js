@@ -36,14 +36,4 @@
   }
 
   window.__carmsgTheme = theme;
-
-  /* Safety net: never leave reveal sections permanently hidden if a later
-     script fails to load. setupReveal() marks the document as ready. */
-  window.setTimeout(function () {
-    if (document.documentElement.classList.contains('reveal-ready')) return;
-    var items = document.querySelectorAll('[data-reveal]');
-    for (var i = 0; i < items.length; i += 1) {
-      items[i].classList.add('is-in');
-    }
-  }, 2000);
 })();

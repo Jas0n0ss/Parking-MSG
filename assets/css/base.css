@@ -350,26 +350,6 @@ ol {
   letter-spacing: 0.02em;
 }
 
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav a {
-  padding: 8px 14px;
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 13.5px;
-  font-weight: 550;
-  transition: color 0.2s ease, background-color 0.2s ease;
-}
-
-.nav a:hover {
-  color: var(--text);
-  background: var(--surface-2);
-}
-
 .header-actions {
   display: flex;
   align-items: center;
@@ -1093,9 +1073,9 @@ ol {
    -------------------------------------------------------------------------- */
 
 .site-footer {
-  margin-top: clamp(64px, 9vw, 112px);
+  margin-top: clamp(48px, 6vw, 72px);
   border-top: 1px solid var(--border);
-  padding: 38px 0 max(42px, env(safe-area-inset-bottom));
+  padding: 32px 0 max(36px, env(safe-area-inset-bottom));
 }
 
 .footer-inner {
@@ -1127,21 +1107,6 @@ ol {
 .footer-brand strong {
   font-size: 14px;
   letter-spacing: -0.01em;
-}
-
-.footer-brand span {
-  display: block;
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-}
-
-.footer-note {
-  max-width: 420px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.75;
 }
 
 .footer-links {
@@ -1177,17 +1142,6 @@ ol {
    Motion utilities
    -------------------------------------------------------------------------- */
 
-.js [data-reveal] {
-  opacity: 0;
-  translate: 0 18px;
-  transition: opacity 0.7s var(--ease), translate 0.7s var(--ease);
-}
-
-.js [data-reveal].is-in {
-  opacity: 1;
-  translate: 0 0;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -1200,11 +1154,6 @@ ol {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .js [data-reveal] {
-    opacity: 1;
-    translate: none;
   }
 }
 
@@ -1225,10 +1174,6 @@ ol {
 
   .header-inner {
     height: 64px;
-  }
-
-  .nav {
-    display: none;
   }
 
   .brand-sub {

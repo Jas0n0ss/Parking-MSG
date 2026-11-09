@@ -526,25 +526,6 @@
     });
   }
 
-  function setupReveal() {
-    document.documentElement.classList.add('reveal-ready');
-    var items = $$('[data-reveal]');
-    if (!items.length) return;
-    if (!('IntersectionObserver' in window) ||
-        (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
-      items.forEach(function (item) { item.classList.add('is-in'); });
-      return;
-    }
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-in');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -48px 0px' });
-    items.forEach(function (item) { observer.observe(item); });
-  }
 
   function setupYear() {
     $$('[data-year]').forEach(function (el) {
@@ -603,7 +584,6 @@
     setupHeader();
     setupConnectivity();
     setupServiceWorker();
-    setupReveal();
     setupYear();
   });
 

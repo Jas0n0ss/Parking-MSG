@@ -108,7 +108,6 @@
     els.copyBtn = $('#copyBtn');
     els.qrOnlyBtn = $('#qrOnlyBtn');
     els.shareBtn = $('#shareBtn');
-    els.shareDivider = $('#shareDivider');
     els.previewPanel = $('#previewPanel');
     els.workspaceActions = $('.workspace-actions');
     els.mobileBar = $('#mobileBar');
@@ -976,7 +975,6 @@
   function setupShare() {
     if (els.shareBtn && typeof navigator.share === 'function') {
       els.shareBtn.hidden = false;
-      if (els.shareDivider) els.shareDivider.hidden = false;
     }
   }
 
