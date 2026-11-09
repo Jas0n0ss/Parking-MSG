@@ -40,12 +40,7 @@
       'preview.qrAria': "QR code with the owner's contact details",
       'preview.plateAria': 'Parking QR code for {plate}',
 
-      'print.kicker': 'TEMPORARY PARKING · SCAN TO CONTACT',
-      'print.ownerLabel': 'Owner: ',
-      'print.hint': 'Scan with any camera app, then call in one tap.',
-      'print.brand': 'CarMsg Parking Tag / parking.404x.io',
       'print.tip': 'Cut along the dashed line. Place it inside the windshield, top right. Do not cover the view or the plate.',
-      'print.noteFallback': 'Parked briefly. Thank you for your patience.',
 
       'page.title': 'Contact the owner · CarMsg',
       'page.titleWithPlate': 'Contact the owner · {plate} · CarMsg',
@@ -121,12 +116,7 @@
       'preview.qrAria': 'رمز QR يحتوي على بيانات التواصل مع المالك',
       'preview.plateAria': 'رمز QR للمواقف للوحة {plate}',
 
-      'print.kicker': 'موقف مؤقت · امسح للتواصل',
-      'print.ownerLabel': 'المالك: ',
-      'print.hint': 'امسح بأي تطبيق كاميرا، ثم اتصل بلمسة واحدة.',
-      'print.brand': 'CarMsg · بطاقة مواقف / parking.404x.io',
       'print.tip': 'اقصص على طول الخط المتقطع. ضعها داخل الزجاج الأمامي في الأعلى جهة اليمين. لا تحجب الرؤية أو اللوحة.',
-      'print.noteFallback': 'موقف مؤقت. شكرًا لتفهّمك.',
 
       'page.title': 'تواصل مع المالك · CarMsg',
       'page.titleWithPlate': 'تواصل مع المالك · {plate} · CarMsg',
@@ -202,12 +192,7 @@
       'preview.qrAria': '包含车主联系方式的二维码',
       'preview.plateAria': '{plate} 的挪车二维码',
 
-      'print.kicker': '临时停靠，扫码联系车主',
-      'print.ownerLabel': '车主：',
-      'print.hint': '微信、相机、支付宝都能扫码，一键拨号',
-      'print.brand': 'CarMsg 挪车码 / parking.404x.io',
       'print.tip': '沿虚线剪下。建议贴在前挡风玻璃内侧右上角，请勿遮挡视线与号牌',
-      'print.noteFallback': '临时停靠，请多包涵',
 
       'page.title': '联系车主 · CarMsg',
       'page.titleWithPlate': '联系车主 · {plate} · CarMsg',
@@ -283,12 +268,7 @@
       'preview.qrAria': '包含車主聯絡方式的 QR 碼',
       'preview.plateAria': '{plate} 的挪車 QR 碼',
 
-      'print.kicker': '臨時停靠，掃碼聯絡車主',
-      'print.ownerLabel': '車主：',
-      'print.hint': '微信、相機、支付寶都能掃碼，一鍵撥號',
-      'print.brand': 'CarMsg 挪車碼 / parking.404x.io',
       'print.tip': '沿虛線剪下。建議貼在前擋風玻璃內側右上角，請勿遮擋視線與號牌',
-      'print.noteFallback': '臨時停靠，請多包涵',
 
       'page.title': '聯絡車主 · CarMsg',
       'page.titleWithPlate': '聯絡車主 · {plate} · CarMsg',
@@ -364,12 +344,7 @@
       'preview.qrAria': '持ち主の連絡先を含む QR コード',
       'preview.plateAria': '{plate} の駐車 QR コード',
 
-      'print.kicker': '一時駐車・スキャンして連絡',
-      'print.ownerLabel': '持ち主：',
-      'print.hint': 'カメラアプリでスキャンして、ワンタップで発信できます。',
-      'print.brand': 'CarMsg 駐車タグ / parking.404x.io',
       'print.tip': '点線に沿って切り取ります。フロントガラスの内側右上に貼り、視界とナンバーを遮らないようにしてください。',
-      'print.noteFallback': '一時駐車中です。ご理解ありがとうございます。',
 
       'page.title': '車の持ち主に連絡 · CarMsg',
       'page.titleWithPlate': '車の持ち主に連絡 · {plate} · CarMsg',
@@ -445,12 +420,7 @@
       'preview.qrAria': '차주 연락처가 담긴 QR 코드',
       'preview.plateAria': '{plate} 주차 QR 코드',
 
-      'print.kicker': '잠시 주차 · 스캔하여 연락',
-      'print.ownerLabel': '차주: ',
-      'print.hint': '카메라 앱으로 스캔한 뒤 한 번만 탭하면 전화할 수 있습니다.',
-      'print.brand': 'CarMsg 주차 태그 / parking.404x.io',
       'print.tip': '점선을 따라 자르세요. 앞유리 안쪽 오른쪽 위에 붙이고 시야와 번호판을 가리지 마세요.',
-      'print.noteFallback': '잠시 주차 중입니다. 양해해 주셔서 감사합니다.',
 
       'page.title': '차주에게 연락 · CarMsg',
       'page.titleWithPlate': '차주에게 연락 · {plate} · CarMsg',
@@ -526,12 +496,7 @@
       'preview.qrAria': 'QR-Code mit den Kontaktdaten des Halters',
       'preview.plateAria': 'Park-QR-Code für {plate}',
 
-      'print.kicker': 'KURZ GEPARKT · ZUM KONTAKT SCANNEN',
-      'print.ownerLabel': 'Halter: ',
-      'print.hint': 'Mit jeder Kamera-App scannen und mit einem Tippen anrufen.',
-      'print.brand': 'CarMsg Parktag / parking.404x.io',
       'print.tip': 'An der gestrichelten Linie ausschneiden. Innen an der Windschutzscheibe oben rechts anbringen. Sicht und Kennzeichen nicht verdecken.',
-      'print.noteFallback': 'Kurz geparkt. Vielen Dank für Ihr Verständnis.',
 
       'page.title': 'Kontakt zum Halter · CarMsg',
       'page.titleWithPlate': 'Kontakt zum Halter · {plate} · CarMsg',
@@ -607,12 +572,7 @@
       'preview.qrAria': 'QR code avec les coordonnées du propriétaire',
       'preview.plateAria': 'QR code de stationnement pour {plate}',
 
-      'print.kicker': 'STATIONNEMENT TEMPORAIRE · SCANNEZ POUR CONTACTER',
-      'print.ownerLabel': 'Propriétaire : ',
-      'print.hint': 'Scannez avec l’appareil photo, puis appelez en un geste.',
-      'print.brand': 'CarMsg · Étiquette / parking.404x.io',
       'print.tip': 'Découpez le long des pointillés. Placez l’étiquette à l’intérieur du pare-brise, en haut à droite. Ne masquez ni la vue ni la plaque.',
-      'print.noteFallback': 'Stationnement temporaire. Merci de votre compréhension.',
 
       'page.title': 'Contacter le propriétaire · CarMsg',
       'page.titleWithPlate': 'Contacter le propriétaire · {plate} · CarMsg',
@@ -688,12 +648,7 @@
       'preview.qrAria': 'Código QR con los datos de contacto del propietario',
       'preview.plateAria': 'Código QR de aparcamiento para {plate}',
 
-      'print.kicker': 'APARCAMIENTO TEMPORAL · ESCANEA PARA CONTACTAR',
-      'print.ownerLabel': 'Propietario: ',
-      'print.hint': 'Escanea con cualquier cámara y llama con un toque.',
-      'print.brand': 'CarMsg · Etiqueta / parking.404x.io',
       'print.tip': 'Recorta por la línea de puntos. Colócala dentro del parabrisas, arriba a la derecha. No cubras la visión ni la matrícula.',
-      'print.noteFallback': 'Aparcamiento temporal. Gracias por tu comprensión.',
 
       'page.title': 'Contactar al propietario · CarMsg',
       'page.titleWithPlate': 'Contactar al propietario · {plate} · CarMsg',
@@ -769,12 +724,7 @@
       'preview.qrAria': 'Código QR com os contactos do proprietário',
       'preview.plateAria': 'Código QR de estacionamento para {plate}',
 
-      'print.kicker': 'ESTACIONAMENTO TEMPORÁRIO · DIGITALIZE PARA CONTACTAR',
-      'print.ownerLabel': 'Proprietário: ',
-      'print.hint': 'Digitalize com qualquer câmara e ligue com um toque.',
-      'print.brand': 'CarMsg · Etiqueta / parking.404x.io',
       'print.tip': 'Corte ao longo da linha tracejada. Coloque no interior do para-brisas, em cima à direita. Não tape a visão nem a matrícula.',
-      'print.noteFallback': 'Estacionamento temporário. Obrigado pela compreensão.',
 
       'page.title': 'Contactar o proprietário · CarMsg',
       'page.titleWithPlate': 'Contactar o proprietário · {plate} · CarMsg',
@@ -850,12 +800,7 @@
       'preview.qrAria': 'Codice QR con i contatti del proprietario',
       'preview.plateAria': 'Codice QR di parcheggio per {plate}',
 
-      'print.kicker': 'SOSTA TEMPORANEA · SCANSIONA PER CONTATTARE',
-      'print.ownerLabel': 'Proprietario: ',
-      'print.hint': 'Scansiona con qualsiasi fotocamera e chiama con un tocco.',
-      'print.brand': 'CarMsg · Tag / parking.404x.io',
       'print.tip': 'Ritaglia lungo la linea tratteggiata. Posizionalo all’interno del parabrezza, in alto a destra. Non coprire la visuale né la targa.',
-      'print.noteFallback': 'Sosta temporanea. Grazie per la comprensione.',
 
       'page.title': 'Contatta il proprietario · CarMsg',
       'page.titleWithPlate': 'Contatta il proprietario · {plate} · CarMsg',
@@ -931,12 +876,7 @@
       'preview.qrAria': 'QR-код с контактами владельца',
       'preview.plateAria': 'Парковочный QR-код для {plate}',
 
-      'print.kicker': 'ВРЕМЕННАЯ ПАРКОВКА · СКАНИРУЙТЕ',
-      'print.ownerLabel': 'Владелец: ',
-      'print.hint': 'Сканируйте камерой телефона и звоните одним нажатием.',
-      'print.brand': 'CarMsg · Парковочная бирка / parking.404x.io',
       'print.tip': 'Отрежьте по пунктирной линии. Разместите внутри лобового стекла справа сверху. Не закрывайте обзор и номерной знак.',
-      'print.noteFallback': 'Временно припаркован. Спасибо за понимание.',
 
       'page.title': 'Связаться с владельцем · CarMsg',
       'page.titleWithPlate': 'Связаться с владельцем · {plate} · CarMsg',

@@ -895,10 +895,20 @@
     if (!state.valid || state.printing) return;
     state.printing = true;
     var data = getData();
+    var poster = document.createElement('canvas');
     var source;
     try {
-      source = QR.createQrCanvas(state.url, { size: 900, color: data.color, logo: true })
-        .toDataURL('image/png');
+      var qrCanvas = QR.createQrCanvas(state.url, { size: 900, color: data.color, logo: true });
+      QR.drawPoster(poster, {
+        plate: data.plate,
+        pcc: data.plateCountry,
+        owner: data.owner,
+        note: data.note,
+        accent: data.color,
+        lang: state.resolvedLang,
+        qrCanvas: qrCanvas
+      });
+      source = poster.toDataURL('image/png');
     } catch (error) {
       state.printing = false;
       CM.toast(ui('toast.printFail'), 'error');
@@ -906,21 +916,10 @@
     }
 
     I18N.apply(state.resolvedLang, els.printSheet);
-    var images = $$('.print-qr', els.printSheet);
+    var images = $$('.print-poster', els.printSheet);
     images.forEach(function (image) {
       image.src = source;
-    });
-    $$('.print-plate', els.printSheet).forEach(function (element) {
-      element.textContent = displayPlate(data.plate, data.plateCountry);
-    });
-    $$('.print-owner', els.printSheet).forEach(function (element) {
-      element.textContent = data.owner
-        ? I18N.t(state.resolvedLang, 'print.ownerLabel') + data.owner
-        : '';
-      element.hidden = !data.owner;
-    });
-    $$('.print-note', els.printSheet).forEach(function (element) {
-      element.textContent = data.note || I18N.t(state.resolvedLang, 'print.noteFallback');
+      image.alt = '';
     });
 
     var pending = images.map(function (image) {

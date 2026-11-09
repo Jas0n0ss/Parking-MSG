@@ -1,6 +1,6 @@
 /* CarMsg service worker: app shell + offline support.
    Bump CACHE_VERSION whenever the static assets change. */
-const CACHE_VERSION = 'carmsg-v12';
+const CACHE_VERSION = 'carmsg-v13';
 const APP_SHELL = [
   './',
   './index.html',
