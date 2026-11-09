@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no">
-  <title>联系车主 · CarMsg 挪车码</title>
-  <meta name="description" content="通过 CarMsg 挪车码联系车主。号码仅保存在链接中，不经过服务器。">
+  <title>Contact the owner · CarMsg</title>
+  <meta name="description" content="Contact the car owner through a CarMsg parking tag. The number stays in the link and never touches a server.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="CarMsg 挪车码">
+  <meta name="apple-mobile-web-app-title" content="CarMsg">
   <meta name="theme-color" id="metaThemeColor" content="#f5f7fb">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'none'">
@@ -19,11 +19,14 @@
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/view.css">
   <script src="assets/js/theme.js"></script>
+  <script defer src="assets/js/libphonenumber.js"></script>
+  <script defer src="assets/js/countries.js"></script>
+  <script defer src="assets/js/i18n.js"></script>
   <script defer src="assets/js/common.js"></script>
   <script defer src="assets/js/view.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#contactMain">跳到联系车主</a>
+  <a class="skip-link" href="#contactMain" data-i18n="page.skip">Skip to contact</a>
 
   <div class="page-bg" aria-hidden="true">
     <span class="orb orb-a"></span>
@@ -99,16 +102,16 @@
         <span class="brand-mark"><svg aria-hidden="true"><use href="#i-car"></use></svg></span>
         <span class="brand-copy">
           <span class="brand-name">CarMsg</span>
-          <span class="brand-sub">挪车二维码</span>
+          <span class="brand-sub" data-i18n="brand.sub">Parking tag</span>
         </span>
-        <span class="sr-only">首页</span>
+        <span class="sr-only" data-i18n="header.home">Home</span>
       </a>
       <div class="header-actions">
-        <a class="header-cta" href="./" aria-label="我也要一张挪车码">
+        <a class="header-cta" href="./" aria-label="Create my own parking tag" data-i18n-aria-label="header.ctaAria">
           <svg aria-hidden="true"><use href="#i-plus"></use></svg>
-          <span>我也要一张</span>
+          <span data-i18n="header.cta">Get my tag</span>
         </a>
-        <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false" title="切换到深色模式">
+        <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode" data-theme-label-dark="Switch to dark mode" data-theme-label-light="Switch to light mode">
           <svg class="icon-moon" aria-hidden="true"><use href="#i-moon"></use></svg>
           <svg class="icon-sun" aria-hidden="true"><use href="#i-sun"></use></svg>
         </button>
@@ -121,9 +124,9 @@
       <svg class="contact-watermark" aria-hidden="true"><use href="#i-car"></use></svg>
 
       <div class="contact-hero">
-        <h1 class="plate-hero" id="contactTitle"><span id="plateText">粤B12345</span></h1>
-        <p class="contact-sub">方便的话，请尽快联系车主挪车。</p>
-        <p class="contact-owner" id="ownerLine" hidden>车主：<strong id="ownerText"></strong></p>
+        <h1 class="plate-hero" id="contactTitle"><span class="plate-cc" id="plateCC" hidden></span><span id="plateText">ABC 123</span></h1>
+        <p class="contact-sub" data-i18n="contact.sub">Please contact the owner as soon as possible.</p>
+        <p class="contact-owner" id="ownerLine" hidden><span data-i18n="contact.ownerLabel">Owner:</span> <strong id="ownerText"></strong></p>
         <blockquote class="owner-note" id="noteBlock" hidden>
           <svg aria-hidden="true"><use href="#i-quote"></use></svg>
           <p id="noteText"></p>
@@ -133,22 +136,22 @@
       <div class="contact-divider" aria-hidden="true"></div>
 
       <div class="phone-section">
-        <span class="phone-label">车主电话</span>
+        <span class="phone-label" data-i18n="phone.label">Owner's phone</span>
         <div class="phone-row">
-          <span class="phone-text" id="phoneText" aria-live="polite">138 **** 5678</span>
-          <button class="phone-reveal" type="button" id="revealBtn" aria-label="显示完整号码" aria-pressed="false" title="显示完整号码">
+          <span class="phone-text" id="phoneText" aria-live="polite">+1 415 *** 1234</span>
+          <button class="phone-reveal" type="button" id="revealBtn" aria-label="Show full number" aria-pressed="false" title="Show full number" data-i18n-aria-label="phone.show" data-i18n-title="phone.show">
             <svg class="icon-eye" aria-hidden="true"><use href="#i-eye"></use></svg>
             <svg class="icon-eye-off" aria-hidden="true"><use href="#i-eye-off"></use></svg>
           </button>
         </div>
-        <p class="phone-hint">为保护隐私，号码默认脱敏显示</p>
+        <p class="phone-hint" data-i18n="phone.hint">Partially hidden to protect privacy</p>
       </div>
 
       <a class="call-button" id="callBtn" href="#">
         <span class="call-icon"><svg aria-hidden="true"><use href="#i-phone"></use></svg></span>
         <span class="call-copy">
-          <strong>拨打电话</strong>
-          <small>直接呼叫车主</small>
+          <strong data-i18n="call.title">Call the owner</strong>
+          <small data-i18n="call.sub">Tap to call directly</small>
         </span>
         <svg class="call-arrow" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
       </a>
@@ -156,66 +159,66 @@
       <div class="secondary-actions">
         <a class="action-tile" id="smsBtn" href="#">
           <svg aria-hidden="true"><use href="#i-message"></use></svg>
-          <span>发短信</span>
+          <span data-i18n="actions.sms">Text</span>
         </a>
         <button class="action-tile" type="button" id="copyBtn">
           <svg aria-hidden="true"><use href="#i-copy"></use></svg>
-          <span>复制号码</span>
+          <span data-i18n="actions.copy">Copy number</span>
         </button>
         <button class="action-tile" type="button" id="vcardBtn">
           <svg aria-hidden="true"><use href="#i-user-plus"></use></svg>
-          <span>存联系人</span>
+          <span data-i18n="actions.vcard">Save contact</span>
         </button>
       </div>
 
       <div class="sms-section">
         <div class="sms-head">
-          <span>快捷短信</span>
-          <small>选一句，发送时自动填好</small>
+          <span data-i18n="sms.head">Quick message</span>
+          <small data-i18n="sms.hint">Pick one and it fills in automatically</small>
         </div>
-        <div class="sms-chips" id="smsChips" role="group" aria-label="短信模板">
-          <button class="sms-chip is-active" type="button" data-template="0" aria-pressed="true">挡住我了</button>
-          <button class="sms-chip" type="button" data-template="1" aria-pressed="false">占用车位</button>
-          <button class="sms-chip" type="button" data-template="2" aria-pressed="false">车窗未关</button>
-          <button class="sms-chip" type="button" data-template="3" aria-pressed="false">车灯未关</button>
+        <div class="sms-chips" id="smsChips" role="group" aria-label="Message templates" data-i18n-aria-label="sms.templates">
+          <button class="sms-chip is-active" type="button" data-template="0" aria-pressed="true" data-i18n="sms.chip0">Blocking my car</button>
+          <button class="sms-chip" type="button" data-template="1" aria-pressed="false" data-i18n="sms.chip1">In my space</button>
+          <button class="sms-chip" type="button" data-template="2" aria-pressed="false" data-i18n="sms.chip2">Window open</button>
+          <button class="sms-chip" type="button" data-template="3" aria-pressed="false" data-i18n="sms.chip3">Lights on</button>
         </div>
-        <p class="sms-preview"><span class="sms-preview-label">短信内容</span><span id="smsPreviewText" aria-live="polite"></span></p>
+        <p class="sms-preview"><span class="sms-preview-label" data-i18n="sms.label">Message</span><span id="smsPreviewText" aria-live="polite"></span></p>
       </div>
 
       <div class="contact-tips">
         <svg aria-hidden="true"><use href="#i-shield"></use></svg>
-        <p><strong>请文明沟通。</strong>恶意骚扰、辱骂或频繁呼叫可能承担法律责任。本页面信息由车主自行提供。</p>
+        <p><strong data-i18n="tips.strong">Please be considerate.</strong> <span data-i18n="tips.text">Harassment or repeated calls may have legal consequences. This information was provided by the car owner.</span></p>
       </div>
     </section>
 
     <section class="contact-card error-card" id="errorCard" aria-labelledby="errorTitle" hidden>
       <span class="error-icon"><svg aria-hidden="true"><use href="#i-alert"></use></svg></span>
-      <h1 id="errorTitle">这个挪车码不完整</h1>
-      <p id="errorText">链接可能被截断，或参数已经失效。请让车主重新生成一张挪车码。</p>
+      <h1 id="errorTitle" data-i18n="error.title">This parking tag is incomplete</h1>
+      <p id="errorText" data-i18n="error.missing">The link may be truncated or missing the plate or phone number. Please ask the owner to create a new tag.</p>
       <div class="error-actions">
         <a class="btn btn-primary" href="./">
-          <svg aria-hidden="true"><use href="#i-car"></use></svg>生成我的挪车码
+          <svg aria-hidden="true"><use href="#i-car"></use></svg><span data-i18n="error.cta">Create my tag</span>
         </a>
-        <a class="btn btn-ghost" href="./#guide">了解怎么贴</a>
+        <a class="btn btn-ghost" href="./#guide" data-i18n="error.guide">How to place it</a>
       </div>
     </section>
 
     <div class="contact-footer-note">
       <svg aria-hidden="true"><use href="#i-lock"></use></svg>
-      <span>信息仅保存在链接中，不经过服务器</span>
-      <a href="./">免费生成挪车码</a>
+      <span data-i18n="footer.info">Your info stays in the link and never touches a server</span>
+      <a href="./" data-i18n="footer.cta">Create a free tag</a>
     </div>
   </main>
 
   <footer class="view-footer">
     <div class="container">
-      <p>© <span data-year>2026</span> CarMsg 挪车码。用一点分寸感，让城市更顺畅。</p>
-      <p><a href="./#privacy">隐私说明</a></p>
+      <p id="footerCopy">© <span data-year>2026</span> CarMsg. A little courtesy goes a long way.</p>
+      <p><a href="./#privacy" data-i18n="footer.privacy">Privacy</a></p>
     </div>
   </footer>
 
   <noscript>
-    <div class="noscript-card">请启用 JavaScript，才能读取车主的联系信息。</div>
+    <div class="noscript-card" data-i18n="noscript">Enable JavaScript to read the owner's contact details.</div>
   </noscript>
 </body>
 </html>

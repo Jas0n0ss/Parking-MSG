@@ -4,19 +4,26 @@
 
   var CM = window.CarMsg;
   var QR = window.CarMsgQR;
+  var I18N = window.CarMsgI18N;
   var $ = CM.$;
   var $$ = CM.$$;
 
   var ACCENTS = {
-    ink: { label: '曜石黑', color: '#0f172a' },
-    ocean: { label: '深海蓝', color: '#1d4ed8' },
-    violet: { label: '暮光紫', color: '#6d28d9' },
-    forest: { label: '松林绿', color: '#047857' },
-    rose: { label: '胭脂红', color: '#be123c' }
+    ink: { color: '#0f172a' },
+    ocean: { color: '#1d4ed8' },
+    violet: { color: '#6d28d9' },
+    forest: { color: '#047857' },
+    rose: { color: '#be123c' }
   };
 
   var state = {
     accent: 'ocean',
+    siteLang: 'zh',
+    plateCountry: 'CN',
+    phoneCountry: 'CN',
+    lang: 'en',
+    resolvedLang: 'en',
+    phone: null,
     valid: false,
     url: '',
     qrUrl: '',
@@ -33,6 +40,7 @@
   };
 
   var els = {};
+  var picker = null;
   var scheduledRender = null;
   var scheduledSave = null;
 
@@ -40,21 +48,24 @@
     cacheElements();
     if (!els.plate) return;
 
+    restoreSiteLang();
     restoreAccent();
+    restoreLang();
+    setupCountryPicker();
     setupEvents();
+    setupSiteToggle();
     setupPreviewObserver();
     setupShare();
-    renderRecents();
+    applySiteLanguage();
+    applyLanguage();
     updateNoteMeta();
-    updateFromInputs(false);
-    validatePlate(false);
-    validatePhone(false);
+    refreshFromInputs();
 
     /* Autofill and bfcache can restore values without firing input events. */
     window.addEventListener('pageshow', function () {
-      setTimeout(function () { updateFromInputs(false); }, 60);
+      setTimeout(refreshFromInputs, 60);
     });
-    setTimeout(function () { updateFromInputs(false); }, 500);
+    setTimeout(refreshFromInputs, 500);
   }
 
   function cacheElements() {
@@ -62,20 +73,31 @@
     els.plate = $('#plate');
     els.plateWrap = $('#plateWrap');
     els.plateMsg = $('#plateMsg');
+    els.plateHint = $('#plateHint');
     els.plateRegion = $('#plateRegion');
     els.plateRegionText = $('#plateRegionText');
+    els.plateCountryBtn = $('#plateCountryBtn');
+    els.plateCountryIso = $('#plateCountryIso');
     els.phone = $('#phone');
     els.phoneWrap = $('#phoneWrap');
     els.phoneMsg = $('#phoneMsg');
+    els.phoneHint = $('#phoneHint');
+    els.phoneCountryBtn = $('#phoneCountryBtn');
+    els.phoneCountryIso = $('#phoneCountryIso');
+    els.phoneCountryDial = $('#phoneCountryDial');
+    els.phonePreview = $('#phonePreview');
     els.owner = $('#owner');
     els.note = $('#note');
     els.noteCounter = $('#noteCounter');
     els.noteChips = $('#noteChips');
     els.formStatus = $('#formStatus');
+    els.langSelect = $('#langSelect');
     els.tagStage = $('#tagStage');
     els.tagCard = $('#tagCard');
     els.qrCanvas = $('#qrCanvas');
     els.plateDisplay = $('#plateDisplay');
+    els.plateText = $('#plateText');
+    els.plateCC = $('#plateCC');
     els.ownerDisplay = $('#ownerDisplay');
     els.ownerAvatar = $('#ownerAvatar');
     els.ownerName = $('#ownerName');
@@ -97,6 +119,132 @@
     els.recentList = $('#recentList');
     els.clearRecent = $('#clearRecent');
     els.printSheet = $('#printSheet');
+    els.countryDialog = $('#countryDialog');
+    els.countryDialogTitle = $('#countryDialogTitle');
+    els.countrySearch = $('#countrySearch');
+    els.countryList = $('#countryList');
+    els.countryResult = $('#countryResult');
+    els.countryEmpty = $('#countryEmpty');
+    els.countryClose = $('#countryClose');
+    els.footerCopy = $('#footerCopy');
+    els.metaDescription = document.querySelector('meta[name="description"]');
+    els.ogTitle = document.querySelector('meta[property="og:title"]');
+    els.ogDescription = document.querySelector('meta[property="og:description"]');
+    els.ogLocale = document.querySelector('meta[property="og:locale"]');
+    els.twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    els.twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    els.appName = document.querySelector('meta[name="application-name"]');
+    els.appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    els.ogSiteName = document.querySelector('meta[property="og:site_name"]');
+  }
+
+  function setupCountryPicker() {
+    if (!window.CarMsgCountryPicker || !els.countryDialog) return;
+    picker = window.CarMsgCountryPicker.create({
+      dialog: els.countryDialog,
+      title: els.countryDialogTitle,
+      search: els.countrySearch,
+      list: els.countryList,
+      result: els.countryResult,
+      empty: els.countryEmpty,
+      close: els.countryClose
+    });
+    if (!picker) return;
+
+    [els.plateCountryBtn, els.phoneCountryBtn].forEach(function (button) {
+      if (!button) return;
+      button.addEventListener('click', function () {
+        var target = button.getAttribute('data-country-target');
+        picker.open({
+          target: target,
+          trigger: button,
+          selected: target === 'plate' ? state.plateCountry : state.phoneCountry,
+          onSelect: function (code) {
+            if (target === 'plate') setPlateCountry(code);
+            else setPhoneCountry(code);
+          }
+        });
+      });
+    });
+  }
+
+  function ui(key, vars) {
+    return I18N.ui(key, vars);
+  }
+
+  function siteCountryName(code) {
+    return I18N.countryName(code, state.siteLang);
+  }
+
+  function restoreSiteLang() {
+    var stored = CM.storage.get('carmsg:ui-lang', 'zh');
+    state.siteLang = stored === 'en' ? 'en' : 'zh';
+  }
+
+  function setupSiteToggle() {
+    $$('[data-lang-choice]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var lang = button.getAttribute('data-lang-choice');
+        if ((lang !== 'en' && lang !== 'zh') || lang === state.siteLang) return;
+        state.siteLang = lang;
+        CM.storage.set('carmsg:ui-lang', lang);
+        applySiteLanguage();
+      });
+    });
+  }
+
+  function syncNotePresets() {
+    $$('[data-note-index]').forEach(function (chip) {
+      var index = chip.getAttribute('data-note-index');
+      chip.setAttribute('data-note', ui('note.preset.' + index));
+    });
+  }
+
+  function applySiteLanguage() {
+    var isEn = state.siteLang === 'en';
+    document.documentElement.lang = isEn ? 'en' : 'zh-CN';
+    document.documentElement.setAttribute('data-ui-lang', state.siteLang);
+    I18N.applyUI(state.siteLang, document);
+
+    document.title = ui('meta.title');
+    if (els.metaDescription) els.metaDescription.setAttribute('content', ui('meta.description'));
+    if (els.ogTitle) els.ogTitle.setAttribute('content', ui('meta.title'));
+    if (els.ogDescription) els.ogDescription.setAttribute('content', ui('meta.description'));
+    if (els.ogLocale) els.ogLocale.setAttribute('content', isEn ? 'en_US' : 'zh_CN');
+    if (els.twitterTitle) els.twitterTitle.setAttribute('content', ui('meta.title'));
+    if (els.twitterDescription) els.twitterDescription.setAttribute('content', ui('meta.description'));
+    if (els.appName) els.appName.setAttribute('content', ui('footer.brand'));
+    if (els.appleTitle) els.appleTitle.setAttribute('content', ui('footer.brand'));
+    if (els.ogSiteName) els.ogSiteName.setAttribute('content', ui('footer.brand'));
+    if (els.footerCopy) {
+      els.footerCopy.textContent = ui('footer.copy', { year: new Date().getFullYear() });
+    }
+
+    $$('[data-lang-choice]').forEach(function (button) {
+      button.setAttribute('aria-pressed',
+        button.getAttribute('data-lang-choice') === state.siteLang ? 'true' : 'false');
+    });
+
+    if (picker && picker.setLang) picker.setLang(state.siteLang);
+    updateCountryUI();
+    syncNotePresets();
+    if (CM.refreshThemeLabels) CM.refreshThemeLabels();
+    if (CM.refreshOfflineText) CM.refreshOfflineText();
+    updatePlateRegion(CM.normalizePlate(els.plate.value, state.plateCountry));
+    validatePlate(state.touchedPlate);
+    validatePhone(state.touchedPhone);
+    updateNoteMeta();
+    renderRecents();
+
+    if (!state.valid) {
+      els.mobilePlate.textContent = ui('mobile.ready');
+    }
+    if (els.formStatus) {
+      els.formStatus.textContent = state.valid
+        ? ui('formStatus.valid')
+        : ((state.touchedPlate || state.touchedPhone) ? ui('formStatus.invalid') : '');
+    }
+    state.lastValid = state.valid;
   }
 
   function setupEvents() {
@@ -116,12 +264,7 @@
       updateFromInputs(false);
     });
 
-    els.phone.addEventListener('input', function () {
-      var digits = CM.normalizePhone(els.phone.value);
-      if (els.phone.value !== digits) els.phone.value = digits;
-      validatePhone(false);
-      updateFromInputs(false);
-    });
+    els.phone.addEventListener('input', handlePhoneInput);
     els.phone.addEventListener('blur', function () {
       state.touchedPhone = true;
       validatePhone(true);
@@ -157,6 +300,20 @@
         state.accent = accent;
         CM.storage.set('carmsg:accent', accent);
         renderSwatches();
+        updateFromInputs(true);
+      });
+    }
+
+    if (els.langSelect) {
+      els.langSelect.addEventListener('change', function () {
+        var value = els.langSelect.value;
+        var normalized = I18N.normalize(value);
+        if (value !== 'auto' && (!normalized || !I18N.isSupported(normalized))) {
+          value = 'en';
+        }
+        state.lang = value;
+        CM.storage.set('carmsg:lang', value);
+        applyLanguage();
         updateFromInputs(true);
       });
     }
@@ -208,8 +365,78 @@
     }
   }
 
+  function refreshFromInputs() {
+    var plate = CM.normalizePlate(els.plate.value, state.plateCountry);
+    if (els.plate.value !== plate) els.plate.value = plate;
+    var digits = CM.normalizePhone(els.phone.value);
+    if (els.phone.value !== digits) els.phone.value = digits;
+    validatePlate(false);
+    validatePhone(false);
+    updateFromInputs(false);
+  }
+
+  function setPlateCountry(code) {
+    if (!CM.countryOf(code) || code === state.plateCountry) return;
+    state.plateCountry = code;
+    els.plate.value = CM.normalizePlate(els.plate.value, code);
+    updateCountryUI();
+    /* A fresh form follows the plate country for the phone picker too. */
+    if (code !== 'CN' && state.phoneCountry === 'CN' && !CM.normalizePhone(els.phone.value)) {
+      state.phoneCountry = code;
+      updateCountryUI();
+    }
+    if (state.lang === 'auto') applyLanguage();
+    updatePlateRegion(els.plate.value);
+    validatePlate(false);
+    validatePhone(false);
+    updateFromInputs(true);
+  }
+
+  function setPhoneCountry(code) {
+    if (!CM.countryOf(code) || code === state.phoneCountry) return;
+    state.phoneCountry = code;
+    /* When the country is chosen before the plate, keep both pickers in step. */
+    if (state.plateCountry === 'CN' && code !== 'CN' && !CM.normalizePhone(els.phone.value) &&
+        !CM.normalizePlate(els.plate.value, state.plateCountry)) {
+      state.plateCountry = code;
+      if (state.lang === 'auto') applyLanguage();
+      updatePlateRegion(els.plate.value);
+      validatePlate(false);
+    }
+    updateCountryUI();
+    validatePhone(false);
+    updateFromInputs(true);
+  }
+
+  function updateCountryUI() {
+    var plateCountry = CM.countryOf(state.plateCountry) || CM.countryOf('CN');
+    var phoneCountry = CM.countryOf(state.phoneCountry) || CM.countryOf('CN');
+    var plateName = siteCountryName(plateCountry.code);
+    var phoneName = siteCountryName(phoneCountry.code);
+
+    els.plateCountryIso.textContent = plateCountry.code;
+    els.plateCountryBtn.setAttribute('aria-label',
+      ui('plate.aria', { country: plateName }));
+    els.plateHint.textContent = plateCountry.code === 'CN'
+      ? ui('plate.hint.cn')
+      : ui('plate.hint.other', { country: plateName });
+    els.plate.placeholder = ui('plate.placeholder', { example: plateCountry.plateExample });
+
+    els.phoneCountryIso.textContent = phoneCountry.code;
+    els.phoneCountryDial.textContent = '+' + phoneCountry.dial;
+    els.phoneCountryBtn.setAttribute('aria-label',
+      ui('phone.aria', { country: phoneName, dial: phoneCountry.dial }));
+    els.phoneHint.textContent = ui('phone.hint', {
+      country: phoneName,
+      dial: phoneCountry.dial
+    });
+
+    var example = CM.phoneExample(phoneCountry.code);
+    els.phone.placeholder = example || ui('phone.placeholder');
+  }
+
   function handlePlateInput() {
-    var normalized = CM.normalizePlate(els.plate.value);
+    var normalized = CM.normalizePlate(els.plate.value, state.plateCountry);
     if (els.plate.value !== normalized) {
       els.plate.value = normalized;
       try {
@@ -223,7 +450,28 @@
     updateFromInputs(false);
   }
 
+  function handlePhoneInput() {
+    var raw = els.phone.value;
+    var digits = CM.normalizePhone(raw);
+    if (digits.length >= 8 && /^(\+|00)/.test(raw.trim())) {
+      var detected = CM.detectPhone(raw);
+      if (detected && CM.countryOf(detected.country)) {
+        state.phoneCountry = detected.country;
+        updateCountryUI();
+        digits = detected.national || digits;
+      }
+    }
+    if (els.phone.value !== digits) els.phone.value = digits;
+    validatePhone(false);
+    updateFromInputs(false);
+  }
+
   function updatePlateRegion(plate) {
+    if (state.plateCountry !== 'CN' || state.siteLang === 'en') {
+      els.plateRegion.hidden = true;
+      els.plateRegionText.textContent = '';
+      return;
+    }
     var region = CM.regionOf(plate);
     if (!region) {
       els.plateRegion.hidden = true;
@@ -237,17 +485,18 @@
   }
 
   function validatePlate(force) {
-    var plate = CM.normalizePlate(els.plate.value);
+    var plate = CM.normalizePlate(els.plate.value, state.plateCountry);
     var touched = force || state.touchedPlate;
+    var example = CM.plateExample(state.plateCountry);
     if (!plate) {
       setFieldState(els.plateWrap, els.plateMsg, els.plate, touched ? 'invalid' : 'neutral',
-        touched ? '请输入车牌号' : '');
+        touched ? ui('error.plate.empty') : '');
       return false;
     }
-    if (!CM.isValidPlate(plate)) {
-      var shouldShow = touched || plate.length >= 7;
+    if (!CM.isValidPlate(plate, state.plateCountry)) {
+      var shouldShow = touched || Array.from(plate).length >= 3;
       setFieldState(els.plateWrap, els.plateMsg, els.plate, shouldShow ? 'invalid' : 'neutral',
-        shouldShow ? '车牌号格式有误，例如 粤B12345' : '');
+        shouldShow ? ui('error.plate.invalid', { example: example || '' }) : '');
       return false;
     }
     setFieldState(els.plateWrap, els.plateMsg, els.plate, 'valid', '');
@@ -255,25 +504,51 @@
   }
 
   function validatePhone(force) {
-    var phone = CM.normalizePhone(els.phone.value);
+    var raw = els.phone.value;
+    var digits = CM.normalizePhone(raw);
     var touched = force || state.touchedPhone;
-    if (!phone) {
+    var info = CM.phoneInfo(digits, state.phoneCountry);
+
+    if (!digits) {
+      state.phone = null;
+      hidePhonePreview();
       setFieldState(els.phoneWrap, els.phoneMsg, els.phone, touched ? 'invalid' : 'neutral',
-        touched ? '请输入手机号' : '');
+        touched ? ui('error.phone.empty') : '');
       return false;
     }
-    if (phone.length < 11) {
-      setFieldState(els.phoneWrap, els.phoneMsg, els.phone, touched ? 'invalid' : 'neutral',
-        touched ? '手机号应为 11 位' : '');
-      return false;
+
+    if (info && info.valid) {
+      state.phone = info;
+      showPhonePreview(info);
+      setFieldState(els.phoneWrap, els.phoneMsg, els.phone, 'valid', '');
+      return true;
     }
-    if (!CM.isValidPhone(phone)) {
+
+    state.phone = null;
+    hidePhonePreview();
+    if (touched || digits.length >= 6) {
+      var example = CM.phoneExample(state.phoneCountry);
       setFieldState(els.phoneWrap, els.phoneMsg, els.phone, 'invalid',
-        '请输入有效的手机号，例如 13812345678');
-      return false;
+        example
+          ? ui('error.phone.invalid', { example: example })
+          : ui('error.phone.invalidGeneric'));
+    } else {
+      setFieldState(els.phoneWrap, els.phoneMsg, els.phone, 'neutral', '');
     }
-    setFieldState(els.phoneWrap, els.phoneMsg, els.phone, 'valid', '');
-    return true;
+    return false;
+  }
+
+  function showPhonePreview(info) {
+    if (!els.phonePreview) return;
+    var text = info.formatted || info.e164;
+    var target = els.phonePreview.querySelector('span');
+    if (target) target.textContent = text;
+    els.phonePreview.hidden = false;
+  }
+
+  function hidePhonePreview() {
+    if (!els.phonePreview) return;
+    els.phonePreview.hidden = true;
   }
 
   function setFieldState(wrap, messageEl, input, type, text) {
@@ -309,15 +584,13 @@
   }
 
   function focusFirstInvalid() {
-    var plate = CM.normalizePlate(els.plate.value);
-    var phone = CM.normalizePhone(els.phone.value);
-    if (!CM.isValidPlate(plate)) {
+    var plate = CM.normalizePlate(els.plate.value, state.plateCountry);
+    if (!CM.isValidPlate(plate, state.plateCountry)) {
       els.plate.focus();
       return;
     }
-    if (!CM.isValidPhone(phone)) {
+    if (!(state.phone && state.phone.valid)) {
       els.phone.focus();
-      return;
     }
   }
 
@@ -330,12 +603,16 @@
 
   function getData() {
     return {
-      plate: CM.normalizePlate(els.plate.value),
-      phone: CM.normalizePhone(els.phone.value),
+      plate: CM.normalizePlate(els.plate.value, state.plateCountry),
+      plateCountry: state.plateCountry,
+      phone: state.phone ? state.phone.e164 : '',
+      phoneCountry: state.phone ? state.phone.country : state.phoneCountry,
       owner: CM.clampText(els.owner.value, 12),
       note: CM.clampText(els.note.value, 40),
       accent: state.accent,
-      color: ACCENTS[state.accent].color
+      color: ACCENTS[state.accent].color,
+      lang: state.lang,
+      resolvedLang: state.resolvedLang
     };
   }
 
@@ -345,7 +622,9 @@
     var params = new URLSearchParams();
     params.set('v', '1');
     params.set('plate', data.plate);
+    if (data.plateCountry !== 'CN') params.set('pcc', data.plateCountry);
     params.set('phone', data.phone);
+    params.set('lang', data.lang);
     if (data.owner) params.set('name', data.owner);
     if (data.note) params.set('note', data.note);
     url.hash = params.toString();
@@ -354,8 +633,8 @@
 
   function updateFromInputs(immediate) {
     var data = getData();
-    var plateOk = CM.isValidPlate(data.plate);
-    var phoneOk = CM.isValidPhone(data.phone);
+    var plateOk = CM.isValidPlate(data.plate, state.plateCountry);
+    var phoneOk = !!(state.phone && state.phone.valid);
     var valid = plateOk && phoneOk;
 
     updateTagContent(data, plateOk);
@@ -395,24 +674,33 @@
     state.lastValid = valid;
     if (!els.formStatus) return;
     if (valid) {
-      els.formStatus.textContent = '二维码已生成，可以下载车贴。';
+      els.formStatus.textContent = ui('formStatus.valid');
     } else if (wasValid === true) {
-      els.formStatus.textContent = '信息不完整，二维码已暂停生成。';
+      els.formStatus.textContent = ui('formStatus.invalid');
     }
   }
 
   function updateTagContent(data, plateOk) {
+    var placeholder = I18N.t(state.resolvedLang, 'preview.platePlaceholder');
     if (data.plate) {
-      els.plateDisplay.textContent = displayPlate(data.plate);
+      var text = displayPlate(data.plate, data.plateCountry);
+      els.plateText.textContent = text;
       els.plateDisplay.classList.toggle('is-placeholder', !plateOk);
+      els.plateDisplay.classList.toggle('is-long', text.length > 9);
     } else {
-      els.plateDisplay.textContent = '你的车牌';
+      els.plateText.textContent = placeholder;
       els.plateDisplay.classList.add('is-placeholder');
+      els.plateDisplay.classList.remove('is-long');
     }
+
+    var intl = data.plateCountry !== 'CN' && plateOk;
+    els.plateDisplay.classList.toggle('is-intl', intl);
+    els.plateCC.hidden = !intl;
+    els.plateCC.textContent = data.plateCountry;
 
     if (data.owner) {
       els.ownerDisplay.hidden = false;
-      els.ownerAvatar.textContent = data.owner.charAt(0);
+      els.ownerAvatar.textContent = Array.from(data.owner)[0] || 'O';
       els.ownerName.textContent = data.owner;
     } else {
       els.ownerDisplay.hidden = true;
@@ -425,10 +713,25 @@
       els.noteDisplay.hidden = true;
     }
 
-    els.qrCanvas.setAttribute('aria-label',
-      plateOk ? displayPlate(data.plate) + ' 的挪车二维码' : '包含车主联系方式的二维码');
     if (plateOk) {
-      els.mobilePlate.textContent = displayPlate(data.plate);
+      var shown = displayPlate(data.plate, data.plateCountry);
+      els.qrCanvas.setAttribute('aria-label',
+        I18N.t(state.resolvedLang, 'preview.plateAria', { plate: shown }));
+      els.mobilePlate.textContent = shown;
+    } else {
+      els.qrCanvas.setAttribute('aria-label', I18N.t(state.resolvedLang, 'preview.qrAria'));
+      els.mobilePlate.textContent = ui('mobile.ready');
+    }
+  }
+
+  function applyLanguage() {
+    state.resolvedLang = I18N.resolve(state.lang, state.plateCountry);
+    I18N.apply(state.resolvedLang, document);
+    if (els.langSelect && els.langSelect.value !== state.lang) {
+      els.langSelect.value = state.lang;
+    }
+    if (!CM.normalizePlate(els.plate.value, state.plateCountry)) {
+      els.plateText.textContent = I18N.t(state.resolvedLang, 'preview.platePlaceholder');
     }
   }
 
@@ -458,7 +761,7 @@
       state.qrUrl = '';
       state.qrAccent = '';
       els.tagCard.classList.remove('is-ready');
-      CM.toast('二维码生成失败，请刷新页面后重试', 'error');
+      CM.toast(ui('toast.qrFail'), 'error');
       return false;
     }
   }
@@ -471,9 +774,12 @@
     els.tagStage.dataset.accent = state.accent;
   }
 
-  function displayPlate(plate) {
+  function displayPlate(plate, country) {
     if (!plate) return '';
-    return plate.length > 2 ? plate.slice(0, 2) + '·' + plate.slice(2) : plate;
+    if (!country || country === 'CN') {
+      return plate.length > 2 ? plate.slice(0, 2) + '·' + plate.slice(2) : plate;
+    }
+    return plate;
   }
 
   function updateNoteMeta() {
@@ -505,6 +811,14 @@
     renderSwatches();
   }
 
+  function restoreLang() {
+    var stored = CM.storage.get('carmsg:lang', 'en');
+    var normalized = I18N.normalize(stored);
+    state.lang = stored === 'auto' || (normalized && I18N.isSupported(normalized))
+      ? (stored === 'auto' ? 'auto' : normalized)
+      : 'en';
+  }
+
   function downloadTag() {
     updateFromInputs(true);
     if (!state.valid || state.exporting) return;
@@ -518,24 +832,26 @@
       qrCanvas = QR.createQrCanvas(state.url, { size: 900, color: data.color, logo: true });
       QR.drawPoster(poster, {
         plate: data.plate,
+        pcc: data.plateCountry,
         owner: data.owner,
         note: data.note,
         accent: data.color,
+        lang: state.resolvedLang,
         qrCanvas: qrCanvas
       });
     } catch (error) {
       state.exporting = false;
       els.downloadBtn.removeAttribute('aria-busy');
       els.mobileDownload.removeAttribute('aria-busy');
-      CM.toast('车贴生成失败，请稍后再试', 'error');
+      CM.toast(ui('toast.tagFail'), 'error');
       return;
     }
     QR.toBlob(poster, 'image/png').then(function (blob) {
-      CM.downloadBlob(blob, 'CarMsg_挪车贴_' + data.plate + '.png');
-      CM.toast('高清车贴已开始下载', 'success');
+      CM.downloadBlob(blob, 'CarMsg_Parking_Tag_' + CM.sanitizeFilename(data.plate) + '.png');
+      CM.toast(ui('toast.tagDownload'), 'success');
       saveRecentNow(data);
     }).catch(function () {
-      CM.toast('车贴生成失败，请稍后再试', 'error');
+      CM.toast(ui('toast.tagFail'), 'error');
     }).then(function () {
       state.exporting = false;
       els.downloadBtn.removeAttribute('aria-busy');
@@ -555,15 +871,15 @@
     } catch (error) {
       state.exporting = false;
       els.qrOnlyBtn.removeAttribute('aria-busy');
-      CM.toast('二维码生成失败，请稍后再试', 'error');
+      CM.toast(ui('toast.qrFail'), 'error');
       return;
     }
     QR.toBlob(qrCanvas, 'image/png').then(function (blob) {
-      CM.downloadBlob(blob, 'CarMsg_二维码_' + data.plate + '.png');
-      CM.toast('二维码图片已下载', 'success');
+      CM.downloadBlob(blob, 'CarMsg_QR_' + CM.sanitizeFilename(data.plate) + '.png');
+      CM.toast(ui('toast.qrDownload'), 'success');
       saveRecentNow(data);
     }).catch(function () {
-      CM.toast('下载失败，请稍后再试', 'error');
+      CM.toast(ui('toast.downloadFail'), 'error');
     }).then(function () {
       state.exporting = false;
       els.qrOnlyBtn.removeAttribute('aria-busy');
@@ -581,22 +897,26 @@
         .toDataURL('image/png');
     } catch (error) {
       state.printing = false;
-      CM.toast('打印准备失败，请稍后再试', 'error');
+      CM.toast(ui('toast.printFail'), 'error');
       return;
     }
+
+    I18N.apply(state.resolvedLang, els.printSheet);
     var images = $$('.print-qr', els.printSheet);
     images.forEach(function (image) {
       image.src = source;
     });
     $$('.print-plate', els.printSheet).forEach(function (element) {
-      element.textContent = displayPlate(data.plate);
+      element.textContent = displayPlate(data.plate, data.plateCountry);
     });
     $$('.print-owner', els.printSheet).forEach(function (element) {
-      element.textContent = data.owner ? '车主：' + data.owner : '';
+      element.textContent = data.owner
+        ? I18N.t(state.resolvedLang, 'print.ownerLabel') + data.owner
+        : '';
       element.hidden = !data.owner;
     });
     $$('.print-note', els.printSheet).forEach(function (element) {
-      element.textContent = data.note || '临时停靠，请多包涵';
+      element.textContent = data.note || I18N.t(state.resolvedLang, 'print.noteFallback');
     });
 
     var pending = images.map(function (image) {
@@ -624,10 +944,10 @@
     if (!state.valid) return;
     CM.copyText(state.url).then(function (ok) {
       if (ok) {
-        CM.toast('二维码链接已复制', 'success');
+        CM.toast(ui('toast.linkCopied'), 'success');
         saveRecentNow(getData());
       } else {
-        CM.toast('复制失败，请手动复制地址栏链接', 'error');
+        CM.toast(ui('toast.copyFail'), 'error');
       }
     });
   }
@@ -637,8 +957,8 @@
     if (!state.valid || typeof navigator.share !== 'function') return;
     var data = getData();
     navigator.share({
-      title: 'CarMsg 挪车码：' + displayPlate(data.plate),
-      text: '扫码或打开链接即可联系车主，请文明沟通。',
+      title: ui('share.title', { plate: displayPlate(data.plate, data.plateCountry) }),
+      text: ui('share.text'),
       url: state.url
     }).then(function () {
       saveRecentNow(data);
@@ -699,8 +1019,11 @@
   }
 
   function isValidRecord(record) {
-    return record && typeof record === 'object' &&
-      CM.isValidPlate(record.plate) && CM.isValidPhone(record.phone);
+    if (!record || typeof record !== 'object') return false;
+    var pcc = CM.countryOf(record.pcc) ? record.pcc : 'CN';
+    var plate = CM.normalizePlate(record.plate || '', pcc);
+    var phone = CM.phoneInfo(record.phone || '', pcc);
+    return CM.isValidPlate(plate, pcc) && !!(phone && phone.valid);
   }
 
   function scheduleSave(data) {
@@ -711,19 +1034,24 @@
   }
 
   function saveRecentNow(data) {
-    if (!data || !CM.isValidPlate(data.plate) || !CM.isValidPhone(data.phone)) return;
+    if (!data || !CM.isValidPlate(data.plate, data.plateCountry) || !data.phone) return;
     var list = getRecents();
     var record = {
       plate: data.plate,
+      pcc: data.plateCountry,
       phone: data.phone,
       owner: data.owner || '',
       note: data.note || '',
       accent: ACCENTS[data.accent] ? data.accent : 'ocean',
+      lang: data.lang,
       ts: Date.now()
     };
     var index = -1;
     for (var i = 0; i < list.length; i += 1) {
-      if (list[i].plate === record.plate && list[i].phone === record.phone) {
+      var existing = CM.phoneInfo(list[i].phone, list[i].pcc || 'CN');
+      var existingNumber = existing ? existing.e164 : list[i].phone;
+      if (list[i].plate === record.plate && existingNumber === record.phone &&
+          (list[i].pcc || 'CN') === record.pcc) {
         index = i;
         break;
       }
@@ -747,6 +1075,7 @@
     els.recentSection.hidden = false;
     var fragment = document.createDocumentFragment();
     list.forEach(function (record, index) {
+      var pcc = CM.countryOf(record.pcc) ? record.pcc : 'CN';
       var card = document.createElement('article');
       card.className = 'recent-card';
 
@@ -754,17 +1083,17 @@
       main.type = 'button';
       main.className = 'recent-main';
       main.setAttribute('data-index', String(index));
-      main.setAttribute('aria-label', '载入 ' + displayPlate(record.plate) + ' 的挪车码');
+      main.setAttribute('aria-label', ui('recent.load', { plate: displayPlate(record.plate, pcc) }));
 
       var plate = document.createElement('span');
       plate.className = 'recent-plate';
-      plate.textContent = displayPlate(record.plate);
+      plate.textContent = displayPlate(record.plate, pcc);
 
       var meta = document.createElement('span');
       meta.className = 'recent-meta';
       var parts = [];
       if (record.owner) parts.push(record.owner);
-      parts.push(CM.maskPhone(record.phone));
+      parts.push(CM.maskPhone(record.phone, pcc));
       parts.push(CM.timeAgo(record.ts));
       meta.textContent = parts.join(' / ');
 
@@ -775,7 +1104,7 @@
       remove.type = 'button';
       remove.className = 'recent-del';
       remove.setAttribute('data-del', String(index));
-      remove.setAttribute('aria-label', '删除 ' + displayPlate(record.plate) + ' 的记录');
+      remove.setAttribute('aria-label', ui('recent.delete', { plate: displayPlate(record.plate, pcc) }));
       remove.innerHTML = '<svg aria-hidden="true"><use href="#i-trash"></use></svg>';
 
       card.appendChild(main);
@@ -792,10 +1121,10 @@
     if (remove) {
       var deleteIndex = Number(remove.getAttribute('data-del'));
       var list = getRecents();
-      var removed = list.splice(deleteIndex, 1)[0];
+      list.splice(deleteIndex, 1);
       CM.storage.set('carmsg:recent', list);
       renderRecents();
-      CM.toast('记录已删除', 'success');
+      CM.toast(ui('recent.deleted'), 'success');
       return;
     }
 
@@ -808,8 +1137,21 @@
   }
 
   function loadRecord(record) {
-    els.plate.value = record.plate;
-    els.phone.value = record.phone;
+    var pcc = CM.countryOf(record.pcc) ? record.pcc : 'CN';
+    var phone = CM.phoneInfo(record.phone, pcc);
+    if (!phone || !phone.valid) return;
+
+    state.plateCountry = pcc;
+    state.phoneCountry = CM.countryOf(phone.country) ? phone.country : pcc;
+    if (record.lang) {
+      var lang = I18N.normalize(record.lang);
+      if (record.lang === 'auto' || (lang && I18N.isSupported(lang))) {
+        state.lang = record.lang === 'auto' ? 'auto' : lang;
+      }
+    }
+
+    els.plate.value = CM.normalizePlate(record.plate, pcc);
+    els.phone.value = phone.national || CM.normalizePhone(record.phone);
     els.owner.value = record.owner || '';
     els.note.value = record.note || '';
     state.touchedPlate = true;
@@ -818,13 +1160,15 @@
       state.accent = record.accent;
       CM.storage.set('carmsg:accent', record.accent);
     }
+    updateCountryUI();
     renderSwatches();
-    updatePlateRegion(record.plate);
+    applyLanguage();
+    updatePlateRegion(els.plate.value);
     updateNoteMeta();
     validatePlate(true);
     validatePhone(true);
     updateFromInputs(true);
-    CM.toast('已载入 ' + displayPlate(record.plate) + ' 的记录', 'success');
+    CM.toast(ui('recent.loaded', { plate: displayPlate(record.plate, pcc) }), 'success');
 
     if (window.matchMedia && window.matchMedia('(max-width: 980px)').matches) {
       var generator = document.getElementById('generator');
@@ -843,13 +1187,13 @@
     if (els.clearRecent.getAttribute('data-confirm') === '1') {
       CM.storage.remove('carmsg:recent');
       renderRecents();
-      CM.toast('本机记录已清空', 'success');
+      CM.toast(ui('recent.cleared'), 'success');
       return;
     }
     els.clearRecent.setAttribute('data-confirm', '1');
     els.clearRecent.classList.add('is-danger');
     var label = els.clearRecent.querySelector('span');
-    if (label) label.textContent = '再点一次清空';
+    if (label) label.textContent = ui('recent.confirm');
     clearTimeout(clearTimer);
     clearTimer = setTimeout(resetClearButton, 3200);
   }
@@ -859,7 +1203,7 @@
     els.clearRecent.removeAttribute('data-confirm');
     els.clearRecent.classList.remove('is-danger');
     var label = els.clearRecent.querySelector('span');
-    if (label) label.textContent = '清空记录';
+    if (label) label.textContent = ui('recent.clear');
     clearTimeout(clearTimer);
   }
 

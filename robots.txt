@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /view.html
 Allow: /
 
-Sitemap: https://car.msfts.org/sitemap.xml
+Sitemap: https://parking.404x.io/sitemap.xml

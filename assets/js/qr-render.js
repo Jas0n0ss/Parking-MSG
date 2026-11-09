@@ -195,7 +195,7 @@
 
     canvas.setAttribute('role', 'img');
     if (!canvas.getAttribute('aria-label')) {
-      canvas.setAttribute('aria-label', '包含车主联系方式的二维码');
+      canvas.setAttribute('aria-label', "QR code with the owner's contact details");
     }
     return canvas;
   }
@@ -205,14 +205,31 @@
     return renderQR(canvas, text, options);
   }
 
+  function fitFont(ctx, text, maxWidth, start, min, weight) {
+    var size = start;
+    while (size > min) {
+      ctx.font = (weight || '700') + ' ' + size + 'px ' + FONT;
+      if (ctx.measureText(text).width <= maxWidth) break;
+      size -= 2;
+    }
+    ctx.font = (weight || '700') + ' ' + size + 'px ' + FONT;
+    return size;
+  }
+
   function drawPoster(canvas, data) {
     var width = 1200;
     var height = 1600;
     var accent = data.accent || '#1d4ed8';
+    var pcc = data.pcc || 'CN';
+    var lang = data.lang || 'en';
+    var i18n = window.CarMsgI18N;
+    var t = function (key) { return i18n ? i18n.t(lang, key) : key; };
     var plate = data.plate || '';
-    var plateDisplay = plate.length > 2 ? plate.slice(0, 2) + '·' + plate.slice(2) : plate;
+    var plateDisplay = plate.length > 2 && pcc === 'CN'
+      ? plate.slice(0, 2) + '·' + plate.slice(2)
+      : plate;
     var owner = data.owner || '';
-    var note = data.note || '临时停靠，请多包涵';
+    var note = data.note || t('poster.noteFallback');
 
     canvas.width = width;
     canvas.height = height;
@@ -263,8 +280,8 @@
     ctx.textBaseline = 'alphabetic';
     ctx.fillText('CarMsg', 206, 148);
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 21px ' + FONT;
-    ctx.fillText('挪车码 · 扫码联系车主', 207, 178);
+    fitFont(ctx, t('poster.brandSub'), 650, 21, 15, '500');
+    ctx.fillText(t('poster.brandSub'), 207, 178);
 
     /* privacy chip */
     ctx.save();
@@ -272,9 +289,11 @@
     roundRect(ctx, 900, 112, 190, 54, 27);
     ctx.fill();
     ctx.fillStyle = shade(accent, -0.08);
-    ctx.font = '600 21px ' + FONT;
+    var privacy = t('poster.privacy');
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+    fitFont(ctx, privacy, 158, 21, 14, '600');
     ctx.textAlign = 'center';
-    ctx.fillText('本地生成，不上传', 995, 146);
+    ctx.fillText(privacy, 995, 146);
     ctx.restore();
 
     /* card */
@@ -297,8 +316,8 @@
     /* card header */
     ctx.textAlign = 'center';
     ctx.fillStyle = shade(accent, -0.12);
-    ctx.font = '700 22px ' + FONT;
-    ctx.fillText('临 时 停 靠 ， 扫 码 联 系 车 主', 600, 334);
+    fitFont(ctx, t('poster.kicker'), 950, 22, 15, '700');
+    ctx.fillText(t('poster.kicker'), 600, 334);
 
     /* QR panel */
     ctx.save();
@@ -322,27 +341,52 @@
     }
 
     /* plate badge */
-    var plateText = plateDisplay;
-    var plateFont = 70;
-    ctx.font = '800 ' + plateFont + 'px ' + FONT;
+    var isIntl = pcc !== 'CN';
+    var ccWidth = isIntl ? 96 : 0;
     if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
-    var plateWidth = Math.max(400, Math.min(820, ctx.measureText(plateText).width + 128));
+    var plateFont = fitFont(ctx, plateDisplay, 760 - ccWidth, 70, 30, '800');
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
+    var plateTextWidth = ctx.measureText(plateDisplay).width;
+    var plateWidth = Math.max(400, Math.min(900, plateTextWidth + 128 + ccWidth));
     var plateHeight = 128;
     var plateX = (width - plateWidth) / 2;
     var plateY = 1002;
 
     var plateGradient = ctx.createLinearGradient(plateX, plateY, plateX + plateWidth, plateY + plateHeight);
-    plateGradient.addColorStop(0, '#1e40af');
-    plateGradient.addColorStop(1, '#1d4ed8');
+    if (isIntl) {
+      plateGradient.addColorStop(0, '#111827');
+      plateGradient.addColorStop(1, '#1f2937');
+    } else {
+      plateGradient.addColorStop(0, '#1e40af');
+      plateGradient.addColorStop(1, '#1d4ed8');
+    }
 
     ctx.save();
-    ctx.shadowColor = 'rgba(30, 64, 175, 0.3)';
+    ctx.shadowColor = isIntl ? 'rgba(15, 23, 42, 0.38)' : 'rgba(30, 64, 175, 0.3)';
     ctx.shadowBlur = 26;
     ctx.shadowOffsetY = 10;
     roundRect(ctx, plateX, plateY, plateWidth, plateHeight, 18);
     ctx.fillStyle = plateGradient;
     ctx.fill();
     ctx.restore();
+
+    if (isIntl) {
+      ctx.save();
+      roundRect(ctx, plateX, plateY, plateWidth, plateHeight, 18);
+      ctx.clip();
+      var stripGradient = ctx.createLinearGradient(plateX, plateY, plateX + ccWidth, plateY + plateHeight);
+      stripGradient.addColorStop(0, '#1e40af');
+      stripGradient.addColorStop(1, '#1d4ed8');
+      ctx.fillStyle = stripGradient;
+      ctx.fillRect(plateX, plateY, ccWidth, plateHeight);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 31px ' + FONT;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
+      ctx.fillText(pcc, plateX + ccWidth / 2, plateY + plateHeight / 2 + 2);
+      ctx.restore();
+    }
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
     ctx.lineWidth = 3;
@@ -352,15 +396,16 @@
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '5px';
-    ctx.fillText(plateText, width / 2 + 2, plateY + plateHeight / 2 + 4);
+    ctx.font = '800 ' + plateFont + 'px ' + FONT;
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
+    ctx.fillText(plateDisplay, plateX + ccWidth + (plateWidth - ccWidth) / 2, plateY + plateHeight / 2 + 4);
     ctx.textBaseline = 'alphabetic';
     if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
 
     /* owner + note */
-    var ownerText = owner ? '车主：' + owner : '扫码后即可联系车主';
+    var ownerText = owner ? t('poster.ownerLabel') + owner : t('poster.ownerFallback');
     ctx.fillStyle = '#475569';
-    ctx.font = '600 31px ' + FONT;
+    fitFont(ctx, ownerText, 900, 31, 20, '600');
     ctx.textAlign = 'center';
     ctx.fillText(ownerText, width / 2, 1184);
 
@@ -383,16 +428,16 @@
 
     /* instruction */
     ctx.fillStyle = '#0f172a';
-    ctx.font = '750 37px ' + FONT;
-    ctx.fillText('扫码联系车主，一键挪车', width / 2, 1372);
+    fitFont(ctx, t('poster.action'), 980, 37, 24, '750');
+    ctx.fillText(t('poster.action'), width / 2, 1372);
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '400 24px ' + FONT;
-    ctx.fillText('微信 / 相机 / 支付宝 扫码均可', width / 2, 1415);
+    fitFont(ctx, t('poster.scanHint'), 900, 24, 16, '400');
+    ctx.fillText(t('poster.scanHint'), width / 2, 1415);
 
     /* footer */
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 20px ' + FONT;
-    ctx.fillText('CarMsg 挪车码 / car.msfts.org', width / 2, 1524);
+    fitFont(ctx, t('poster.footer'), 900, 20, 14, '500');
+    ctx.fillText(t('poster.footer'), width / 2, 1524);
 
     return canvas;
   }

@@ -124,6 +124,40 @@
   white-space: nowrap;
 }
 
+.plate-hero .plate-cc {
+  display: none;
+}
+
+.plate-hero.is-intl {
+  gap: 12px;
+  overflow: hidden;
+  padding: 0 18px 0 0;
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+  box-shadow: 0 16px 30px -16px rgba(15, 23, 42, 0.85), 0 0 0 1px rgba(15, 23, 42, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.plate-hero.is-intl .plate-cc {
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  padding: 0 9px;
+  background: #1d4ed8;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.plate-hero.is-intl .plate-text {
+  padding: 5px 0 6px;
+}
+
+.plate-hero.is-long {
+  font-size: clamp(20px, 6vw, 28px);
+  letter-spacing: 0.04em;
+}
+
 .contact-sub {
   color: var(--muted);
   font-size: 12.5px;
@@ -197,12 +231,19 @@
 }
 
 .phone-text {
+  max-width: 100%;
   color: var(--text);
   font-family: var(--font-mono);
   font-size: 20px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
+  overflow-wrap: anywhere;
+}
+
+.phone-text.is-long {
+  font-size: 16px;
+  letter-spacing: 0.02em;
 }
 
 .phone-reveal {
@@ -378,9 +419,10 @@
 
 .sms-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
+  gap: 3px 10px;
   margin-bottom: 9px;
 }
 
@@ -654,6 +696,10 @@
 
   .phone-text {
     font-size: 19px;
+  }
+
+  .phone-text.is-long {
+    font-size: 14px;
   }
 
   .call-button {

@@ -1,6 +1,6 @@
 /* CarMsg service worker: app shell + offline support.
    Bump CACHE_VERSION whenever the static assets change. */
-const CACHE_VERSION = 'carmsg-v4';
+const CACHE_VERSION = 'carmsg-v9';
 const APP_SHELL = [
   './',
   './index.html',
@@ -11,8 +11,12 @@ const APP_SHELL = [
   './assets/js/theme.js',
   './assets/js/qrcode.js',
   './assets/js/plate-data.js',
+  './assets/js/libphonenumber.js',
+  './assets/js/countries.js',
+  './assets/js/i18n.js',
   './assets/js/common.js',
   './assets/js/qr-render.js',
+  './assets/js/country-picker.js',
   './assets/js/app.js',
   './assets/js/view.js',
   './assets/favicon.svg',

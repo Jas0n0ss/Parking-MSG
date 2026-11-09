@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no">
   <title>CarMsg 挪车码 · 扫码联系车主，一键挪车</title>
-  <meta name="description" content="免费生成挪车二维码。贴在挡风玻璃上，扫码即可一键拨号或发送短信。无需注册，不上传数据，30 秒做好一张有分寸感的挪车贴。">
+  <meta name="description" content="免费生成挪车二维码，支持全球手机号与车牌、多语言车贴。贴在挡风玻璃上，扫码即可一键拨号或发送短信，无需注册，不上传数据。">
   <meta name="application-name" content="CarMsg 挪车码">
   <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,20 +13,20 @@
   <meta name="theme-color" id="metaThemeColor" content="#f5f7fb">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; media-src 'none'">
-  <link rel="canonical" href="https://car.msfts.org/">
+  <link rel="canonical" href="https://parking.404x.io/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:site_name" content="CarMsg 挪车码">
   <meta property="og:title" content="CarMsg 挪车码 · 扫码联系车主，一键挪车">
   <meta property="og:description" content="一张二维码，让挪车更从容。纯本地生成，不上传任何数据。">
-  <meta property="og:url" content="https://car.msfts.org/">
-  <meta property="og:image" content="https://car.msfts.org/assets/og-cover.png">
+  <meta property="og:url" content="https://parking.404x.io/">
+  <meta property="og:image" content="https://parking.404x.io/assets/og-cover.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CarMsg 挪车码">
   <meta name="twitter:description" content="一张二维码，让挪车更从容。纯本地生成，不上传任何数据。">
-  <meta name="twitter:image" content="https://car.msfts.org/assets/og-cover.png">
+  <meta name="twitter:image" content="https://parking.404x.io/assets/og-cover.png">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -35,12 +35,16 @@
   <script src="assets/js/theme.js"></script>
   <script defer src="assets/js/qrcode.js"></script>
   <script defer src="assets/js/plate-data.js"></script>
+  <script defer src="assets/js/libphonenumber.js"></script>
+  <script defer src="assets/js/countries.js"></script>
+  <script defer src="assets/js/i18n.js"></script>
   <script defer src="assets/js/common.js"></script>
   <script defer src="assets/js/qr-render.js"></script>
+  <script defer src="assets/js/country-picker.js"></script>
   <script defer src="assets/js/app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#generator">跳到二维码生成器</a>
+  <a class="skip-link" href="#generator" data-ui="skip">跳到二维码生成器</a>
 
   <div class="page-bg" aria-hidden="true">
     <span class="orb orb-a"></span>
@@ -111,6 +115,10 @@
       <path d="M4 20h4l10.5-10.5a2.8 2.8 0 0 0-4-4L4 16v4Z"/>
       <path d="m13.5 6.5 4 4"/>
     </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 17 17 7"/>
+      <path d="M9 7h8v8"/>
+    </symbol>
     <symbol id="i-windshield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4.8 6.5h14.4l-1.3 10.9a2 2 0 0 1-2 1.8H8.1a2 2 0 0 1-2-1.8L4.8 6.5Z"/>
       <path d="M7.2 11h9.6"/><path d="M8.6 15.2h6.8"/>
@@ -139,6 +147,20 @@
       <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/>
       <circle cx="12" cy="12" r="3"/>
     </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="10.8" cy="10.8" r="6.6"/>
+      <path d="m15.7 15.7 4.1 4.1"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m5 12.6 4.2 4.2L19 7"/>
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 6 12 12M18 6 6 18"/>
+    </symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="8.5"/>
+      <path d="M3.6 12h16.8M12 3.5c2.2 2.3 3.3 5.2 3.3 8.5S14.2 18.2 12 20.5C9.8 18.2 8.7 15.3 8.7 12S9.8 5.8 12 3.5Z"/>
+    </symbol>
   </svg>
 
   <header class="site-header">
@@ -147,16 +169,21 @@
         <span class="brand-mark"><svg aria-hidden="true"><use href="#i-car"></use></svg></span>
         <span class="brand-copy">
           <span class="brand-name">CarMsg</span>
-          <span class="brand-sub">挪车二维码</span>
+          <span class="brand-sub" data-ui="brand.sub">挪车二维码</span>
         </span>
-        <span class="sr-only">首页</span>
+        <span class="sr-only" data-ui="brand.home">首页</span>
       </a>
-      <nav class="nav" aria-label="主导航">
-        <a href="#guide">使用指南</a>
-        <a href="#privacy">隐私说明</a>
+      <nav class="nav" aria-label="主导航" data-ui-aria-label="nav.aria">
+        <a href="#guide" data-ui="nav.guide">使用指南</a>
+        <a href="#privacy" data-ui="nav.privacy">隐私说明</a>
+        <a href="#opensource" data-ui="nav.source">开源</a>
       </nav>
       <div class="header-actions">
-        <a class="icon-btn" href="https://github.com/Jas0n0ss/carmsg" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看源码" title="GitHub">
+        <div class="ui-lang-switch" role="group" aria-label="界面语言" data-ui-aria-label="ui.group">
+          <button class="ui-lang-btn" type="button" data-lang-choice="zh" aria-pressed="true" lang="zh" title="中文">中</button>
+          <button class="ui-lang-btn" type="button" data-lang-choice="en" aria-pressed="false" lang="en" title="English">EN</button>
+        </div>
+        <a class="icon-btn" href="https://github.com/Jas0n0ss/carmsg" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 查看源码" title="GitHub" data-ui-aria-label="header.github">
           <svg aria-hidden="true"><use href="#i-github"></use></svg>
         </a>
         <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-label="切换到深色模式" aria-pressed="false" title="切换到深色模式">
@@ -169,43 +196,47 @@
 
   <main id="main">
     <section class="hero container">
-      <h1>一张二维码，<br><span class="hero-em">让挪车更从容</span></h1>
-      <p class="hero-lead">贴在挡风玻璃上，扫码即可一键拨号或发送短信。无需注册，不上传数据，30 秒做好一张有分寸感的挪车贴。</p>
-      <ul class="hero-meta" aria-label="产品特点">
-        <li><svg aria-hidden="true"><use href="#i-lock"></use></svg>号码不经过服务器</li>
-        <li><svg aria-hidden="true"><use href="#i-qr"></use></svg>高清可打印</li>
-        <li><svg aria-hidden="true"><use href="#i-clock"></use></svg>永久有效</li>
+      <h1><span data-ui="hero.line1">一张二维码，</span><br><span class="hero-em" data-ui="hero.line2">让挪车更从容</span></h1>
+      <p class="hero-lead" data-ui="hero.lead">贴在挡风玻璃上，扫码即可一键拨号或发送短信。无需注册，不上传数据，30 秒做好一张有分寸感的挪车贴。</p>
+      <ul class="hero-meta" aria-label="产品特点" data-ui-aria-label="hero.metaAria">
+        <li><svg aria-hidden="true"><use href="#i-lock"></use></svg><span data-ui="hero.meta.private">号码不经过服务器</span></li>
+        <li><svg aria-hidden="true"><use href="#i-qr"></use></svg><span data-ui="hero.meta.print">高清可打印</span></li>
+        <li><svg aria-hidden="true"><use href="#i-clock"></use></svg><span data-ui="hero.meta.valid">永久有效</span></li>
       </ul>
-      <a class="hero-scroll" href="#generator">开始填写<svg aria-hidden="true"><use href="#i-chevron"></use></svg></a>
+      <a class="hero-scroll" href="#generator"><span data-ui="hero.scroll">开始填写</span><svg aria-hidden="true"><use href="#i-chevron"></use></svg></a>
     </section>
 
     <section class="container" id="generator" aria-labelledby="generatorTitle">
-      <h2 class="sr-only" id="generatorTitle">挪车二维码生成器</h2>
+      <h2 class="sr-only" id="generatorTitle" data-ui="generator.title">挪车二维码生成器</h2>
       <div class="workspace">
         <div class="panel form-panel">
           <div class="panel-head">
             <div>
-              <h3 class="panel-title">创建你的挪车码</h3>
-              <p class="panel-sub">填好信息后实时生成，可调颜色。</p>
+              <h3 class="panel-title" data-ui="form.title">创建你的挪车码</h3>
+              <p class="panel-sub" data-ui="form.sub">填好信息后实时生成，可调颜色。</p>
             </div>
-            <span class="pill"><span class="pill-dot is-live"></span>本地生成</span>
+            <span class="pill"><span class="pill-dot is-live"></span><span data-ui="form.local">本地生成</span></span>
           </div>
 
           <form id="carForm" novalidate autocomplete="on">
             <div class="field">
               <div class="field-label">
-                <label for="plate">车牌号</label>
-                <span class="field-hint" id="plateHint">支持新能源 8 位车牌</span>
+                <label for="plate" data-ui="field.plate">车牌号</label>
+                <span class="field-hint" id="plateHint">支持全球车牌</span>
               </div>
-              <div class="input-wrap" id="plateWrap">
-                <svg class="input-icon" aria-hidden="true"><use href="#i-car"></use></svg>
+              <div class="input-wrap has-country" id="plateWrap">
+                <button class="country-trigger" type="button" id="plateCountryBtn" data-country-target="plate"
+                  aria-haspopup="dialog" aria-controls="countryDialog" aria-expanded="false" aria-label="选择车牌国家/地区，当前中国">
+                  <span class="country-iso" id="plateCountryIso">CN</span>
+                  <svg class="country-chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
+                </button>
                 <input id="plate" name="plate" type="text" inputmode="text" autocomplete="off"
-                  autocapitalize="characters" spellcheck="false" maxlength="12"
+                  autocapitalize="characters" spellcheck="false" maxlength="20"
                   placeholder="例如 粤B12345" aria-describedby="plateHint plateMsg">
               </div>
               <p class="plate-region" id="plateRegion" role="status" aria-live="polite" aria-atomic="true" hidden>
                 <svg aria-hidden="true"><use href="#i-pin"></use></svg>
-                <span>归属地</span>
+                <span data-ui="plate.region">归属地</span>
                 <strong id="plateRegionText"></strong>
               </p>
               <p class="field-msg" id="plateMsg" role="alert">
@@ -215,14 +246,22 @@
 
             <div class="field">
               <div class="field-label">
-                <label for="phone">手机号</label>
-                <span class="field-hint" id="phoneHint">仅用于扫码后拨号</span>
+                <label for="phone" data-ui="field.phone">手机号</label>
+                <span class="field-hint" id="phoneHint">中国 +86 · 仅用于扫码后拨号</span>
               </div>
-              <div class="input-wrap has-prefix" id="phoneWrap">
-                <span class="input-prefix" aria-hidden="true">+86</span>
+              <div class="input-wrap has-country has-dial" id="phoneWrap">
+                <button class="country-trigger" type="button" id="phoneCountryBtn" data-country-target="phone"
+                  aria-haspopup="dialog" aria-controls="countryDialog" aria-expanded="false" aria-label="选择手机号国家/地区，当前中国 +86">
+                  <span class="country-iso" id="phoneCountryIso">CN</span>
+                  <span class="country-dial" id="phoneCountryDial">+86</span>
+                  <svg class="country-chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
+                </button>
                 <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national"
-                  maxlength="20" placeholder="请输入 11 位手机号" aria-describedby="phoneHint phoneMsg">
+                  maxlength="18" placeholder="138 0013 8000" aria-describedby="phoneHint phoneMsg">
               </div>
+              <p class="phone-preview" id="phonePreview" role="status" aria-live="polite" aria-atomic="true" hidden>
+                <svg aria-hidden="true"><use href="#i-phone"></use></svg><span></span>
+              </p>
               <p class="field-msg" id="phoneMsg" role="alert">
                 <svg aria-hidden="true"><use href="#i-alert"></use></svg><span></span>
               </p>
@@ -230,41 +269,41 @@
 
             <div class="field">
               <div class="field-label">
-                <label for="owner">车主称呼<span class="optional">选填</span></label>
-                <span class="field-hint" id="ownerHint">会显示在扫码页</span>
+                <label for="owner"><span data-ui="field.owner">车主称呼</span><span class="optional" data-ui="field.optional">选填</span></label>
+                <span class="field-hint" id="ownerHint" data-ui="owner.hint">会显示在扫码页</span>
               </div>
               <div class="input-wrap">
                 <svg class="input-icon" aria-hidden="true"><use href="#i-user"></use></svg>
                 <input id="owner" name="owner" type="text" autocomplete="name" maxlength="12"
-                  placeholder="例如：张先生" aria-describedby="ownerHint">
+                  placeholder="例如：张先生" aria-describedby="ownerHint" data-ui-placeholder="owner.placeholder">
               </div>
             </div>
 
             <div class="field">
               <div class="field-label">
-                <label for="note">留言<span class="optional">选填</span></label>
+                <label for="note"><span data-ui="field.note">留言</span><span class="optional" data-ui="field.optional">选填</span></label>
                 <span class="counter" id="noteCounter">0 / 40</span>
               </div>
               <div class="textarea-wrap">
                 <textarea id="note" name="note" maxlength="40" rows="2"
-                  aria-describedby="noteCounter" placeholder="例如：临时停靠，马上就走，感谢理解"></textarea>
+                  aria-describedby="noteCounter" placeholder="例如：临时停靠，马上就走，感谢理解" data-ui-placeholder="note.placeholder"></textarea>
               </div>
-              <div class="chips" id="noteChips" role="group" aria-label="常用留言">
-                <button type="button" class="chip" data-note="临时停靠，马上就走，感谢理解">马上就走</button>
-                <button type="button" class="chip" data-note="临时停靠，10 分钟内离开，感谢理解">10 分钟内</button>
-                <button type="button" class="chip" data-note="临时停靠，请多包涵">请多包涵</button>
-                <button type="button" class="chip" data-note="车上有小孩，请多包涵">车上有小孩</button>
-                <button type="button" class="chip" data-note="车上有老人，请多包涵">车上有老人</button>
-                <button type="button" class="chip" data-note="请电话联系我，谢谢">电话联系我</button>
-                <button type="button" class="chip" data-note="电话未接请短信联系，谢谢">未接请短信</button>
-                <button type="button" class="chip" data-note="夜间停车，请勿鸣笛，谢谢">请勿鸣笛</button>
+              <div class="chips" id="noteChips" role="group" aria-label="常用留言" data-ui-aria-label="note.chipsAria">
+                <button type="button" class="chip" data-note="临时停靠，马上就走，感谢理解" data-note-index="0" data-ui="note.chip.0">马上就走</button>
+                <button type="button" class="chip" data-note="临时停靠，10 分钟内离开，感谢理解" data-note-index="1" data-ui="note.chip.1">10 分钟内</button>
+                <button type="button" class="chip" data-note="临时停靠，请多包涵" data-note-index="2" data-ui="note.chip.2">请多包涵</button>
+                <button type="button" class="chip" data-note="车上有小孩，请多包涵" data-note-index="3" data-ui="note.chip.3">车上有小孩</button>
+                <button type="button" class="chip" data-note="车上有老人，请多包涵" data-note-index="4" data-ui="note.chip.4">车上有老人</button>
+                <button type="button" class="chip" data-note="请电话联系我，谢谢" data-note-index="5" data-ui="note.chip.5">电话联系我</button>
+                <button type="button" class="chip" data-note="电话未接请短信联系，谢谢" data-note-index="6" data-ui="note.chip.6">未接请短信</button>
+                <button type="button" class="chip" data-note="夜间停车，请勿鸣笛，谢谢" data-note-index="7" data-ui="note.chip.7">请勿鸣笛</button>
               </div>
             </div>
 
             <div class="form-foot">
               <p class="privacy-line">
                 <svg aria-hidden="true"><use href="#i-shield"></use></svg>
-                <span>信息只写入二维码链接，不上传服务器。二维码本身包含号码，建议使用备用号码。</span>
+                <span data-ui="privacy.line">信息只写入二维码链接，不上传服务器。二维码本身包含号码，建议使用备用号码。</span>
               </p>
             </div>
             <p class="sr-only" id="formStatus" role="status" aria-live="polite" aria-atomic="true"></p>
@@ -274,15 +313,36 @@
         <aside class="panel preview-panel" id="previewPanel" aria-labelledby="previewTitle">
           <div class="panel-head preview-head">
             <div>
-              <h3 class="panel-title" id="previewTitle">车贴长这样</h3>
-              <p class="panel-sub">选一个喜欢的二维码颜色。</p>
+              <h3 class="panel-title" id="previewTitle" data-ui="preview.title">车贴长这样</h3>
+              <p class="panel-sub" data-ui="preview.sub">选语言和二维码颜色，车贴与扫码页同步。</p>
             </div>
-            <div class="swatches" id="swatches" role="group" aria-label="二维码颜色">
-              <button class="swatch" type="button" data-accent="ink" aria-label="曜石黑" title="曜石黑" aria-pressed="false"></button>
-              <button class="swatch" type="button" data-accent="ocean" aria-label="深海蓝" title="深海蓝" aria-pressed="true"></button>
-              <button class="swatch" type="button" data-accent="violet" aria-label="暮光紫" title="暮光紫" aria-pressed="false"></button>
-              <button class="swatch" type="button" data-accent="forest" aria-label="松林绿" title="松林绿" aria-pressed="false"></button>
-              <button class="swatch" type="button" data-accent="rose" aria-label="胭脂红" title="胭脂红" aria-pressed="false"></button>
+            <div class="preview-controls">
+              <label class="lang-select">
+                <svg class="lang-globe" aria-hidden="true"><use href="#i-globe"></use></svg>
+                <span class="sr-only" data-ui="preview.langLabel">车贴与扫码页语言</span>
+                <select id="langSelect">
+                  <option value="en">English (default)</option>
+                  <option value="auto" data-ui="preview.langAuto">自动 · 跟随车牌</option>
+                  <option value="zh-Hans">简体中文</option>
+                  <option value="zh-Hant">繁體中文</option>
+                  <option value="ja">日本語</option>
+                  <option value="ko">한국어</option>
+                  <option value="de">Deutsch</option>
+                  <option value="fr">Français</option>
+                  <option value="es">Español</option>
+                  <option value="pt">Português</option>
+                  <option value="it">Italiano</option>
+                  <option value="ru">Русский</option>
+                </select>
+                <svg class="lang-chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
+              </label>
+              <div class="swatches" id="swatches" role="group" aria-label="二维码颜色" data-ui-aria-label="preview.color">
+                <button class="swatch" type="button" data-accent="ink" aria-label="曜石黑" title="曜石黑" aria-pressed="false" data-ui-aria-label="accent.ink" data-ui-title="accent.ink"></button>
+                <button class="swatch" type="button" data-accent="ocean" aria-label="深海蓝" title="深海蓝" aria-pressed="true" data-ui-aria-label="accent.ocean" data-ui-title="accent.ocean"></button>
+                <button class="swatch" type="button" data-accent="violet" aria-label="暮光紫" title="暮光紫" aria-pressed="false" data-ui-aria-label="accent.violet" data-ui-title="accent.violet"></button>
+                <button class="swatch" type="button" data-accent="forest" aria-label="松林绿" title="松林绿" aria-pressed="false" data-ui-aria-label="accent.forest" data-ui-title="accent.forest"></button>
+                <button class="swatch" type="button" data-accent="rose" aria-label="胭脂红" title="胭脂红" aria-pressed="false" data-ui-aria-label="accent.rose" data-ui-title="accent.rose"></button>
+              </div>
             </div>
           </div>
 
@@ -290,59 +350,63 @@
             <div class="tag-stage-glow" aria-hidden="true"></div>
             <div class="tag-card" id="tagCard">
               <div class="tag-top">
-                <span class="tag-chip"><svg aria-hidden="true"><use href="#i-qr"></use></svg>扫码挪车</span>
+                <span class="tag-chip"><svg aria-hidden="true"><use href="#i-qr"></use></svg><span data-i18n="preview.chip">Scan to contact</span></span>
                 <span class="tag-brand" aria-hidden="true">CARMSG</span>
               </div>
               <div class="qr-frame" id="qrFrame">
-                <canvas id="qrCanvas" width="720" height="720" role="img" aria-label="包含车主联系方式的二维码"></canvas>
+                <canvas id="qrCanvas" width="720" height="720" role="img" aria-label="QR code with the owner's contact details"></canvas>
                 <div class="qr-empty" id="qrEmpty">
                   <span class="qr-empty-icon"><svg aria-hidden="true"><use href="#i-qr"></use></svg></span>
-                  <strong>等待填写信息</strong>
-                  <span>二维码将在这里实时生成</span>
+                  <strong data-i18n="preview.emptyTitle">Waiting for details</strong>
+                  <span data-i18n="preview.emptyBody">Your QR code appears here</span>
                 </div>
               </div>
               <div class="tag-info">
-                <span class="plate-badge is-placeholder" id="plateDisplay">你的车牌</span>
+                <span class="plate-badge is-placeholder" id="plateDisplay">
+                  <span class="plate-cc" id="plateCC" hidden>CN</span>
+                  <span class="plate-text" id="plateText">Your plate</span>
+                </span>
                 <div class="tag-owner" id="ownerDisplay" hidden>
-                  <span class="owner-avatar" id="ownerAvatar" aria-hidden="true">车</span>
-                  <span id="ownerName">车主</span>
+                  <span class="owner-avatar" id="ownerAvatar" aria-hidden="true">O</span>
+                  <span id="ownerName">Owner</span>
                 </div>
                 <p class="tag-note" id="noteDisplay" hidden></p>
-                <p class="tag-scan"><svg aria-hidden="true"><use href="#i-phone"></use></svg>扫码联系车主，一键拨号</p>
+                <p class="tag-scan"><svg aria-hidden="true"><use href="#i-phone"></use></svg><span data-i18n="preview.scan">Scan to contact the owner</span></p>
               </div>
               <div class="tag-footer">
-                <span>请勿遮挡号牌</span>
+                <span data-i18n="preview.footer">Do not cover the plate</span>
                 <span class="tag-footer-brand" aria-hidden="true">CarMsg</span>
               </div>
             </div>
           </div>
+          <p class="preview-note" data-ui="preview.note">语言会同步到车贴和扫码页；选「自动」会跟随车牌地区。</p>
 
         </aside>
       </div>
 
-      <div class="workspace-actions" role="group" aria-label="导出车贴">
+      <div class="workspace-actions" role="group" aria-label="导出车贴" data-ui-aria-label="action.group">
           <div class="preview-actions">
             <button class="btn btn-primary" type="button" id="downloadBtn" disabled>
-              <svg aria-hidden="true"><use href="#i-download"></use></svg>下载车贴
+              <svg aria-hidden="true"><use href="#i-download"></use></svg><span data-ui="action.download">下载车贴</span>
             </button>
             <button class="btn btn-ghost" type="button" id="printBtn" disabled>
-              <svg aria-hidden="true"><use href="#i-printer"></use></svg>打印
+              <svg aria-hidden="true"><use href="#i-printer"></use></svg><span data-ui="action.print">打印</span>
             </button>
-            <button class="btn btn-ghost btn-icon-only" type="button" id="copyBtn" disabled aria-label="复制二维码链接" title="复制链接">
+            <button class="btn btn-ghost btn-icon-only" type="button" id="copyBtn" disabled aria-label="复制二维码链接" title="复制链接" data-ui-aria-label="action.copy" data-ui-title="action.copyTitle">
               <svg aria-hidden="true"><use href="#i-link"></use></svg>
             </button>
           </div>
           <div class="sub-actions">
             <button class="btn-quiet" type="button" id="qrOnlyBtn" disabled>
-              <svg aria-hidden="true"><use href="#i-qr"></use></svg>仅下载二维码
+              <svg aria-hidden="true"><use href="#i-qr"></use></svg><span data-ui="action.qrOnly">仅下载二维码</span>
             </button>
             <span class="sub-divider" aria-hidden="true"></span>
             <button class="btn-quiet" type="button" id="shareBtn" hidden>
-              <svg aria-hidden="true"><use href="#i-share"></use></svg>分享
+              <svg aria-hidden="true"><use href="#i-share"></use></svg><span data-ui="action.share">分享</span>
             </button>
             <span class="sub-divider" id="shareDivider" hidden aria-hidden="true"></span>
             <a class="btn-quiet" href="#guide">
-              <svg aria-hidden="true"><use href="#i-windshield"></use></svg>怎么贴？
+              <svg aria-hidden="true"><use href="#i-windshield"></use></svg><span data-ui="action.how">怎么贴？</span>
             </a>
           </div>
       </div>
@@ -351,11 +415,11 @@
     <section class="container section recent-section" id="recentSection" aria-labelledby="recentTitle" hidden>
       <div class="section-head">
         <div>
-          <h2 id="recentTitle">最近生成</h2>
-          <p>仅保存在你的浏览器里，不会上传。可随时清除。</p>
+          <h2 id="recentTitle" data-ui="recent.title">最近生成</h2>
+          <p data-ui="recent.sub">仅保存在你的浏览器里，不会上传。可随时清除。</p>
         </div>
         <button class="btn btn-quiet" type="button" id="clearRecent">
-          <svg aria-hidden="true"><use href="#i-trash"></use></svg><span>清空记录</span>
+          <svg aria-hidden="true"><use href="#i-trash"></use></svg><span data-ui="recent.clear">清空记录</span>
         </button>
       </div>
       <div class="recent-grid" id="recentList"></div>
@@ -364,8 +428,8 @@
     <section class="container section" id="guide" aria-labelledby="guideTitle">
       <div class="section-head">
         <div>
-          <h2 id="guideTitle">三步，贴好一张挪车码</h2>
-          <p>不需要账号，不需要下载 App。做好后可以打印，也可以直接保存到手机相册。</p>
+          <h2 id="guideTitle" data-ui="guide.title">三步，贴好一张挪车码</h2>
+          <p data-ui="guide.sub">不需要账号，不需要下载 App。做好后可以打印，也可以直接保存到手机相册。</p>
         </div>
       </div>
       <div class="steps">
@@ -374,24 +438,24 @@
             <span class="step-num">01</span>
             <svg class="step-icon" aria-hidden="true"><use href="#i-edit"></use></svg>
           </div>
-          <h3>填写车牌与号码</h3>
-          <p>支持普通车牌和 8 位新能源车牌，输入时自动校验。</p>
+          <h3 data-ui="guide.step1.title">填写车牌与号码</h3>
+          <p data-ui="guide.step1.body">支持普通车牌和 8 位新能源车牌，输入时自动校验。</p>
         </article>
         <article class="step">
           <div class="step-top">
             <span class="step-num">02</span>
             <svg class="step-icon" aria-hidden="true"><use href="#i-download"></use></svg>
           </div>
-          <h3>下载或直接打印</h3>
-          <p>生成高清 PNG，或用 A4 纸打印三张车贴。</p>
+          <h3 data-ui="guide.step2.title">下载或直接打印</h3>
+          <p data-ui="guide.step2.body">生成高清 PNG，或用 A4 纸打印三张车贴。</p>
         </article>
         <article class="step">
           <div class="step-top">
             <span class="step-num">03</span>
             <svg class="step-icon" aria-hidden="true"><use href="#i-windshield"></use></svg>
           </div>
-          <h3>贴在前挡风玻璃内侧</h3>
-          <p>推荐贴在右上角，不遮挡视线和号牌。</p>
+          <h3 data-ui="guide.step3.title">贴在前挡风玻璃内侧</h3>
+          <p data-ui="guide.step3.body">推荐贴在右上角，不遮挡视线和号牌。</p>
         </article>
       </div>
     </section>
@@ -400,31 +464,165 @@
       <div class="privacy-panel" data-reveal>
         <div class="privacy-copy">
           <span class="privacy-mark" aria-hidden="true"><svg><use href="#i-shield"></use></svg></span>
-          <h2 id="privacyTitle">你的号码，<br>不该经过任何服务器。</h2>
-          <p>CarMsg 是一个纯前端工具。二维码在一台设备上生成，整个网站没有后端、没有分析脚本，也没有广告追踪。</p>
+          <h2 id="privacyTitle"><span data-ui="privacy.title1">你的号码，</span><br><span data-ui="privacy.title2">不该经过任何服务器。</span></h2>
+          <p data-ui="privacy.body">CarMsg 是一个纯前端工具。二维码在一台设备上生成，整个网站没有后端、没有分析脚本，也没有广告追踪。</p>
           <div class="privacy-actions">
-            <a class="btn btn-light" href="#generator">开始生成</a>
+            <a class="btn btn-light" href="#generator" data-ui="privacy.cta">开始生成</a>
           </div>
-          <p class="privacy-caution"><strong>请留意：</strong>二维码本身包含号码，任何人扫码或解码都能看到。建议使用备用号码，并像保管名片一样保管车贴。</p>
+          <p class="privacy-caution"><strong data-ui="privacy.cautionStrong">请留意：</strong><span data-ui="privacy.cautionText">二维码本身包含号码，任何人扫码或解码都能看到。建议使用备用号码，并像保管名片一样保管车贴。</span></p>
         </div>
         <ul class="privacy-list">
           <li>
             <span class="privacy-icon"><svg aria-hidden="true"><use href="#i-lock"></use></svg></span>
-            <div><strong>号码放在链接的 # 之后</strong><span>浏览器不会把 # 后面的内容发送给服务器，减少日志留痕。</span></div>
+            <div><strong data-ui="privacy.item1.title">号码放在链接的 # 之后</strong><span data-ui="privacy.item1.body">浏览器不会把 # 后面的内容发送给服务器，减少日志留痕。</span></div>
           </li>
           <li>
             <span class="privacy-icon"><svg aria-hidden="true"><use href="#i-shield"></use></svg></span>
-            <div><strong>没有第三方脚本</strong><span>不接入统计、广告或外部字体，页面资源全部来自本站。</span></div>
+            <div><strong data-ui="privacy.item2.title">没有外部请求</strong><span data-ui="privacy.item2.body">不接入统计、广告或外部字体，页面资源全部来自本站。</span></div>
           </li>
           <li>
             <span class="privacy-icon"><svg aria-hidden="true"><use href="#i-refresh"></use></svg></span>
-            <div><strong>记录只在你的浏览器</strong><span>最近生成仅存于 localStorage，可一键清除。</span></div>
+            <div><strong data-ui="privacy.item3.title">记录只在你的浏览器</strong><span data-ui="privacy.item3.body">最近生成仅存于 localStorage，可一键清除。</span></div>
           </li>
           <li>
             <span class="privacy-icon"><svg aria-hidden="true"><use href="#i-eye"></use></svg></span>
-            <div><strong>扫码页默认脱敏</strong><span>手机号中间四位以星号显示，需要时再展开完整号码。</span></div>
+            <div><strong data-ui="privacy.item4.title">扫码页默认脱敏</strong><span data-ui="privacy.item4.body">号码默认隐藏中间部分，需要时再展开完整号码。</span></div>
           </li>
         </ul>
+      </div>
+    </section>
+
+    <section class="container section" id="opensource" aria-labelledby="opensourceTitle">
+      <div class="repo-panel" data-reveal>
+        <svg class="repo-mark" aria-hidden="true"><use href="#i-github"></use></svg>
+
+        <div class="repo-head">
+          <div class="repo-intro">
+            <p class="repo-kicker">
+              <span class="repo-dot" aria-hidden="true"></span>
+              <span data-ui="repo.kicker">OPEN SOURCE · PUBLIC REPO</span>
+            </p>
+            <h2 id="opensourceTitle">
+              <span data-ui="repo.title1">这个项目，</span><br>
+              <span class="repo-em" data-ui="repo.title2">连源码一起公开</span>
+            </h2>
+            <p class="repo-lead" data-ui="repo.lead">车贴怎么画、号码怎么校验、链接怎么拼，全部写在公开仓库里。没有后端，也没有藏起来的统计脚本。下面是仓库的体检报告。</p>
+          </div>
+          <a class="btn btn-ghost repo-cta" href="https://github.com/Jas0n0ss/carmsg" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true"><use href="#i-github"></use></svg>
+            <span data-ui="repo.cta">打开 GitHub 仓库</span>
+            <svg class="repo-cta-arrow" aria-hidden="true"><use href="#i-arrow"></use></svg>
+          </a>
+        </div>
+
+        <ul class="repo-stats" aria-label="仓库数据" data-ui-aria-label="repo.statsAria">
+          <li><strong>28</strong><span data-ui="repo.stat.commits">次提交</span></li>
+          <li><strong>245</strong><span data-ui="repo.stat.countries">国家与地区</span></li>
+          <li><strong>11</strong><span data-ui="repo.stat.langs">种车贴语言</span></li>
+          <li><strong>0</strong><span data-ui="repo.stat.trackers">个追踪脚本</span></li>
+        </ul>
+
+        <div class="repo-charts">
+          <figure class="repo-chart">
+            <figcaption class="repo-chart-head">
+              <span class="repo-chart-title" data-ui="repo.chart1.title">体积构成</span>
+              <span class="repo-chart-meta" data-ui="repo.chart1.meta">约 554 KB</span>
+            </figcaption>
+            <div class="repo-bar" role="img" aria-label="全站约 554 KB：第三方库 229 KB 占 41%，业务脚本 200 KB 占 36%，样式 71 KB 占 13%，页面 54 KB 占 10%。" data-ui-aria-label="repo.chart1.aria">
+              <span class="repo-seg is-lib" style="--w:41.4"></span>
+              <span class="repo-seg is-js" style="--w:36.1"></span>
+              <span class="repo-seg is-css" style="--w:12.8"></span>
+              <span class="repo-seg is-html" style="--w:9.7"></span>
+            </div>
+            <ul class="repo-legend">
+              <li>
+                <span class="repo-swatch is-lib" aria-hidden="true"></span>
+                <span data-ui="repo.legend.lib">第三方库</span>
+                <span class="repo-legend-val">229 KB · 41%</span>
+              </li>
+              <li>
+                <span class="repo-swatch is-js" aria-hidden="true"></span>
+                <span data-ui="repo.legend.js">业务脚本</span>
+                <span class="repo-legend-val">200 KB · 36%</span>
+              </li>
+              <li>
+                <span class="repo-swatch is-css" aria-hidden="true"></span>
+                <span data-ui="repo.legend.css">样式</span>
+                <span class="repo-legend-val">71 KB · 13%</span>
+              </li>
+              <li>
+                <span class="repo-swatch is-html" aria-hidden="true"></span>
+                <span data-ui="repo.legend.html">页面</span>
+                <span class="repo-legend-val">54 KB · 10%</span>
+              </li>
+            </ul>
+          </figure>
+
+          <figure class="repo-chart">
+            <figcaption class="repo-chart-head">
+              <span class="repo-chart-title" data-ui="repo.chart2.title">核心脚本</span>
+              <span class="repo-chart-meta" data-ui="repo.chart2.meta">按行数</span>
+            </figcaption>
+            <ul class="repo-modules">
+              <li>
+                <span class="repo-mod-label"><strong data-ui="repo.module.i18n">多语言文案</strong><small>i18n.js</small></span>
+                <span class="repo-mod-track" aria-hidden="true"><span class="repo-mod-fill" style="--w:100"></span></span>
+                <span class="repo-mod-value">1,391</span>
+              </li>
+              <li>
+                <span class="repo-mod-label"><strong data-ui="repo.module.app">表单与预览</strong><small>app.js</small></span>
+                <span class="repo-mod-track" aria-hidden="true"><span class="repo-mod-fill" style="--w:87.1"></span></span>
+                <span class="repo-mod-value">1,211</span>
+              </li>
+              <li>
+                <span class="repo-mod-label"><strong data-ui="repo.module.common">校验与存储</strong><small>common.js</small></span>
+                <span class="repo-mod-track" aria-hidden="true"><span class="repo-mod-fill" style="--w:46.4"></span></span>
+                <span class="repo-mod-value">645</span>
+              </li>
+              <li>
+                <span class="repo-mod-label"><strong data-ui="repo.module.qr">车贴绘制</strong><small>qr-render.js</small></span>
+                <span class="repo-mod-track" aria-hidden="true"><span class="repo-mod-fill" style="--w:34.9"></span></span>
+                <span class="repo-mod-value">486</span>
+              </li>
+              <li>
+                <span class="repo-mod-label"><strong data-ui="repo.module.plate">号牌数据</strong><small>plate-data.js</small></span>
+                <span class="repo-mod-track" aria-hidden="true"><span class="repo-mod-fill" style="--w:33.9"></span></span>
+                <span class="repo-mod-value">472</span>
+              </li>
+              <li>
+                <span class="repo-mod-label"><strong data-ui="repo.module.view">扫码页</strong><small>view.js</small></span>
+                <span class="repo-mod-track" aria-hidden="true"><span class="repo-mod-fill" style="--w:19.7"></span></span>
+                <span class="repo-mod-value">274</span>
+              </li>
+            </ul>
+          </figure>
+        </div>
+
+        <div class="repo-foot">
+          <div class="repo-langs">
+            <span class="repo-langs-label" data-ui="repo.langs.label">车贴与扫码页支持</span>
+            <ul class="repo-lang-chips">
+              <li lang="en">English</li>
+              <li lang="zh-Hans">简体中文</li>
+              <li lang="zh-Hant">繁體中文</li>
+              <li lang="ja">日本語</li>
+              <li lang="ko">한국어</li>
+              <li lang="de">Deutsch</li>
+              <li lang="fr">Français</li>
+              <li lang="es">Español</li>
+              <li lang="pt">Português</li>
+              <li lang="it">Italiano</li>
+              <li lang="ru">Русский</li>
+            </ul>
+          </div>
+          <div class="repo-foot-meta">
+            <p class="repo-note" data-ui="repo.note">数据取自 2026-11-09 的仓库快照；体积不含图片，行数含注释。</p>
+            <a class="repo-commits" href="https://github.com/Jas0n0ss/carmsg/commits/main" target="_blank" rel="noopener noreferrer">
+              <span data-ui="repo.commitsLink">查看提交记录</span>
+              <svg aria-hidden="true"><use href="#i-arrow"></use></svg>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -436,71 +634,95 @@
         <div>
           <a class="footer-brand" href="./">
             <span class="brand-mark"><svg aria-hidden="true"><use href="#i-car"></use></svg></span>
-            <div><strong>CarMsg 挪车码</strong><span>让每一次挪车都体面一点</span></div>
+            <div><strong data-ui="footer.brand">CarMsg 挪车码</strong><span data-ui="footer.sub">让每一次挪车都体面一点</span></div>
           </a>
-          <p class="footer-note">免费、无广告、无账号。二维码在本机生成，数据不离开你的设备。建议使用备用号码。</p>
+          <p class="footer-note" data-ui="footer.note">免费、无广告、无账号。二维码在本机生成，数据不离开你的设备。建议使用备用号码。</p>
         </div>
         <div class="footer-links">
-          <a href="#guide">使用指南</a>
-          <a href="#privacy">隐私说明</a>
-            <a href="https://github.com/Jas0n0ss/carmsg" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="#guide" data-ui="footer.guide">使用指南</a>
+          <a href="#privacy" data-ui="footer.privacy">隐私说明</a>
+            <a href="https://github.com/Jas0n0ss/carmsg" target="_blank" rel="noopener noreferrer" data-ui="footer.github">GitHub</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© <span data-year>2026</span> CarMsg 挪车码 / car.msfts.org</span>
-        <span>用一点分寸感，让城市更顺畅。</span>
+        <span id="footerCopy">© <span data-year>2026</span> CarMsg 挪车码 / parking.404x.io</span>
+        <span data-ui="footer.tagline">用一点分寸感，让城市更顺畅。</span>
       </div>
     </div>
   </footer>
 
+  <dialog class="country-dialog" id="countryDialog" aria-labelledby="countryDialogTitle">
+    <div class="country-dialog-head">
+      <div>
+        <p class="country-dialog-kicker" data-ui="picker.kicker">国家 / 地区</p>
+        <h2 id="countryDialogTitle">选择国家/地区</h2>
+      </div>
+      <button class="country-close" type="button" id="countryClose" aria-label="关闭" data-ui-aria-label="picker.close">
+        <svg aria-hidden="true"><use href="#i-x"></use></svg>
+      </button>
+    </div>
+    <div class="country-search">
+      <svg class="country-search-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+      <input type="search" id="countrySearch" placeholder="搜索国家、地区或区号" autocomplete="off"
+        spellcheck="false" aria-label="搜索国家、地区或区号" data-ui-placeholder="picker.search" data-ui-aria-label="picker.search">
+    </div>
+    <p class="country-result" id="countryResult" role="status" aria-live="polite"></p>
+    <div class="country-list" id="countryList" role="listbox" aria-label="国家/地区" data-ui-aria-label="picker.listAria"></div>
+    <div class="country-empty" id="countryEmpty" hidden>
+      <span class="country-empty-icon" aria-hidden="true"><svg><use href="#i-search"></use></svg></span>
+      <strong data-ui="picker.emptyTitle">没有找到匹配的国家</strong>
+      <span data-ui="picker.emptyBody">试试国家名称、两位代码或区号，例如 +86。</span>
+    </div>
+  </dialog>
+
   <div class="mobile-bar" id="mobileBar">
     <div class="mobile-bar-info">
       <strong id="mobilePlate">车贴已生成</strong>
-      <span>可直接下载或打印</span>
+      <span data-ui="mobile.sub">可直接下载或打印</span>
     </div>
-    <button class="btn btn-ghost btn-sm" type="button" id="mobilePreview">预览</button>
-    <button class="btn btn-primary btn-sm" type="button" id="mobileDownload">下载</button>
+    <button class="btn btn-ghost btn-sm" type="button" id="mobilePreview" data-ui="mobile.preview">预览</button>
+    <button class="btn btn-primary btn-sm" type="button" id="mobileDownload" data-ui="mobile.download">下载</button>
   </div>
 
   <div class="print-sheet" id="printSheet" aria-hidden="true">
     <article class="print-tag">
       <div class="print-qr-wrap"><img class="print-qr" alt=""></div>
       <div class="print-copy">
-        <span class="print-kicker">临时停靠，扫码联系车主</span>
+        <span class="print-kicker" data-i18n="print.kicker">TEMPORARY PARKING · SCAN TO CONTACT</span>
         <div class="print-plate"></div>
         <div class="print-owner"></div>
         <p class="print-note"></p>
-        <div class="print-hint">微信、相机、支付宝都能扫码，一键拨号</div>
-        <div class="print-brand">CarMsg 挪车码 / car.msfts.org</div>
+        <div class="print-hint" data-i18n="print.hint">Scan with any camera app, then call in one tap.</div>
+        <div class="print-brand" data-i18n="print.brand">CarMsg Parking Tag / parking.404x.io</div>
       </div>
     </article>
     <article class="print-tag">
       <div class="print-qr-wrap"><img class="print-qr" alt=""></div>
       <div class="print-copy">
-        <span class="print-kicker">临时停靠，扫码联系车主</span>
+        <span class="print-kicker" data-i18n="print.kicker">TEMPORARY PARKING · SCAN TO CONTACT</span>
         <div class="print-plate"></div>
         <div class="print-owner"></div>
         <p class="print-note"></p>
-        <div class="print-hint">微信、相机、支付宝都能扫码，一键拨号</div>
-        <div class="print-brand">CarMsg 挪车码 / car.msfts.org</div>
+        <div class="print-hint" data-i18n="print.hint">Scan with any camera app, then call in one tap.</div>
+        <div class="print-brand" data-i18n="print.brand">CarMsg Parking Tag / parking.404x.io</div>
       </div>
     </article>
     <article class="print-tag">
       <div class="print-qr-wrap"><img class="print-qr" alt=""></div>
       <div class="print-copy">
-        <span class="print-kicker">临时停靠，扫码联系车主</span>
+        <span class="print-kicker" data-i18n="print.kicker">TEMPORARY PARKING · SCAN TO CONTACT</span>
         <div class="print-plate"></div>
         <div class="print-owner"></div>
         <p class="print-note"></p>
-        <div class="print-hint">微信、相机、支付宝都能扫码，一键拨号</div>
-        <div class="print-brand">CarMsg 挪车码 / car.msfts.org</div>
+        <div class="print-hint" data-i18n="print.hint">Scan with any camera app, then call in one tap.</div>
+        <div class="print-brand" data-i18n="print.brand">CarMsg Parking Tag / parking.404x.io</div>
       </div>
     </article>
-    <p class="print-tip">沿虚线剪下。建议贴在前挡风玻璃内侧右上角，请勿遮挡视线与号牌</p>
+    <p class="print-tip" data-i18n="print.tip">Cut along the dashed line. Place it inside the windshield, top right. Do not cover the view or the plate.</p>
   </div>
 
   <noscript>
-    <div class="noscript-card">请启用 JavaScript，二维码才能在你的浏览器中本地生成。</div>
+    <div class="noscript-card" data-ui="noscript">请启用 JavaScript，二维码才能在你的浏览器中本地生成。</div>
   </noscript>
 </body>
 </html>
