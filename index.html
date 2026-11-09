@@ -333,6 +333,7 @@
                   <option value="pt">Português</option>
                   <option value="it">Italiano</option>
                   <option value="ru">Русский</option>
+                  <option value="ar">العربية</option>
                 </select>
                 <svg class="lang-chevron" aria-hidden="true"><use href="#i-chevron"></use></svg>
               </label>
@@ -348,7 +349,7 @@
 
           <div class="tag-stage" id="tagStage" data-accent="ocean">
             <div class="tag-stage-glow" aria-hidden="true"></div>
-            <div class="tag-card" id="tagCard">
+            <div class="tag-card" id="tagCard" dir="ltr">
               <div class="tag-top">
                 <span class="tag-chip"><svg aria-hidden="true"><use href="#i-qr"></use></svg><span data-i18n="preview.chip">Scan to contact</span></span>
                 <span class="tag-brand" aria-hidden="true">CARMSG</span>
@@ -364,7 +365,7 @@
               <div class="tag-info">
                 <span class="plate-badge is-placeholder" id="plateDisplay">
                   <span class="plate-cc" id="plateCC" hidden>CN</span>
-                  <span class="plate-text" id="plateText">Your plate</span>
+                  <span class="plate-text" id="plateText" dir="auto">Your plate</span>
                 </span>
                 <div class="tag-owner" id="ownerDisplay" hidden>
                   <span class="owner-avatar" id="ownerAvatar" aria-hidden="true">O</span>
@@ -518,7 +519,7 @@
         <ul class="repo-stats" aria-label="仓库数据" data-ui-aria-label="repo.statsAria">
           <li><strong>30+</strong><span data-ui="repo.stat.commits">次提交</span></li>
           <li><strong>245</strong><span data-ui="repo.stat.countries">国家与地区</span></li>
-          <li><strong>11</strong><span data-ui="repo.stat.langs">种车贴语言</span></li>
+          <li><strong>12</strong><span data-ui="repo.stat.langs">种车贴语言</span></li>
           <li><strong>0</strong><span data-ui="repo.stat.trackers">个追踪脚本</span></li>
         </ul>
 
@@ -622,6 +623,7 @@
               <li lang="pt">Português</li>
               <li lang="it">Italiano</li>
               <li lang="ru">Русский</li>
+              <li lang="ar">العربية</li>
             </ul>
           </div>
           <p class="repo-note" data-ui="repo.note">数据取自 2026-11-09 的仓库快照；体积不含图片，行数含注释。</p>
@@ -691,7 +693,7 @@
     <button class="btn btn-primary btn-sm" type="button" id="mobileDownload" data-ui="mobile.download">下载</button>
   </div>
 
-  <div class="print-sheet" id="printSheet" aria-hidden="true">
+  <div class="print-sheet" id="printSheet" dir="ltr" aria-hidden="true">
     <article class="print-tag">
       <div class="print-qr-wrap"><img class="print-qr" alt=""></div>
       <div class="print-copy">

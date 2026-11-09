@@ -2447,3 +2447,23 @@ body.has-dialog {
   font-size: 13px;
   transform: translateX(-50%);
 }
+
+/* RTL output preview and print ------------------------------------------ */
+
+#tagCard[dir="rtl"] .tag-chip,
+#tagCard[dir="rtl"] .tag-scan,
+#tagCard[dir="rtl"] .tag-footer,
+#tagCard[dir="rtl"] .plate-badge {
+  letter-spacing: 0;
+}
+
+#tagCard[dir="rtl"] .tag-note {
+  text-align: right;
+}
+
+[dir="rtl"] .print-kicker,
+[dir="rtl"] .print-plate,
+[dir="rtl"] .print-brand,
+[dir="rtl"] .print-tip {
+  letter-spacing: 0;
+}

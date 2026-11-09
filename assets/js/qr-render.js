@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif';
+  var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Geeza Pro", "Noto Naskh Arabic", "Noto Sans Arabic", sans-serif';
   var BRAND_FROM = '#3b82f6';
   var BRAND_TO = '#0e7490';
 
@@ -230,10 +230,12 @@
       : plate;
     var owner = data.owner || '';
     var note = data.note || t('poster.noteFallback');
+    var isRtl = !!(i18n && i18n.isRtl && i18n.isRtl(lang));
 
     canvas.width = width;
     canvas.height = height;
     var ctx = canvas.getContext('2d');
+    if ('direction' in ctx) ctx.direction = isRtl ? 'rtl' : 'ltr';
 
     /* background */
     ctx.fillStyle = '#f6f8ff';
@@ -273,27 +275,30 @@
     ctx.restore();
 
     /* brand row */
-    drawBrandMark(ctx, 110, 105, 78);
+    var brandX = isRtl ? width - 110 - 78 : 110;
+    var brandTextX = isRtl ? width - 206 : 206;
+    drawBrandMark(ctx, brandX, 105, 78);
     ctx.fillStyle = '#0f172a';
     ctx.font = '800 42px ' + FONT;
-    ctx.textAlign = 'left';
+    ctx.textAlign = isRtl ? 'right' : 'left';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText('CarMsg', 206, 148);
+    ctx.fillText('CarMsg', brandTextX, 148);
     ctx.fillStyle = '#94a3b8';
     fitFont(ctx, t('poster.brandSub'), 650, 21, 15, '500');
-    ctx.fillText(t('poster.brandSub'), 207, 178);
+    ctx.fillText(t('poster.brandSub'), isRtl ? width - 207 : 207, 178);
 
     /* privacy chip */
     ctx.save();
+    var chipX = isRtl ? 110 : 900;
     ctx.fillStyle = rgba(accent, 0.09);
-    roundRect(ctx, 900, 112, 190, 54, 27);
+    roundRect(ctx, chipX, 112, 190, 54, 27);
     ctx.fill();
     ctx.fillStyle = shade(accent, -0.08);
     var privacy = t('poster.privacy');
     if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
     fitFont(ctx, privacy, 158, 21, 14, '600');
     ctx.textAlign = 'center';
-    ctx.fillText(privacy, 995, 146);
+    ctx.fillText(privacy, chipX + 95, 146);
     ctx.restore();
 
     /* card */
@@ -343,9 +348,10 @@
     /* plate badge */
     var isIntl = pcc !== 'CN';
     var ccWidth = isIntl ? 96 : 0;
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
+    var plateSpacing = isRtl ? '0px' : '4px';
+    if ('letterSpacing' in ctx) ctx.letterSpacing = plateSpacing;
     var plateFont = fitFont(ctx, plateDisplay, 760 - ccWidth, 70, 30, '800');
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
+    if ('letterSpacing' in ctx) ctx.letterSpacing = plateSpacing;
     var plateTextWidth = ctx.measureText(plateDisplay).width;
     var plateWidth = Math.max(400, Math.min(900, plateTextWidth + 128 + ccWidth));
     var plateHeight = 128;
@@ -370,21 +376,22 @@
     ctx.fill();
     ctx.restore();
 
+    var stripX = isRtl ? plateX + plateWidth - ccWidth : plateX;
     if (isIntl) {
       ctx.save();
       roundRect(ctx, plateX, plateY, plateWidth, plateHeight, 18);
       ctx.clip();
-      var stripGradient = ctx.createLinearGradient(plateX, plateY, plateX + ccWidth, plateY + plateHeight);
+      var stripGradient = ctx.createLinearGradient(stripX, plateY, stripX + ccWidth, plateY + plateHeight);
       stripGradient.addColorStop(0, '#1e40af');
       stripGradient.addColorStop(1, '#1d4ed8');
       ctx.fillStyle = stripGradient;
-      ctx.fillRect(plateX, plateY, ccWidth, plateHeight);
+      ctx.fillRect(stripX, plateY, ccWidth, plateHeight);
       ctx.fillStyle = '#ffffff';
       ctx.font = '800 31px ' + FONT;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
-      ctx.fillText(pcc, plateX + ccWidth / 2, plateY + plateHeight / 2 + 2);
+      ctx.fillText(pcc, stripX + ccWidth / 2, plateY + plateHeight / 2 + 2);
       ctx.restore();
     }
 
@@ -397,8 +404,11 @@
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '800 ' + plateFont + 'px ' + FONT;
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '4px';
-    ctx.fillText(plateDisplay, plateX + ccWidth + (plateWidth - ccWidth) / 2, plateY + plateHeight / 2 + 4);
+    if ('letterSpacing' in ctx) ctx.letterSpacing = plateSpacing;
+    var plateTextCenter = isIntl
+      ? (isRtl ? plateX + (plateWidth - ccWidth) / 2 : plateX + ccWidth + (plateWidth - ccWidth) / 2)
+      : plateX + plateWidth / 2;
+    ctx.fillText(plateDisplay, plateTextCenter, plateY + plateHeight / 2 + 4);
     ctx.textBaseline = 'alphabetic';
     if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
 

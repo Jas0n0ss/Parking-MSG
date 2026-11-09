@@ -122,6 +122,7 @@
     state.lang = lang || 'en';
     var html = document.documentElement;
     html.lang = state.lang;
+    html.dir = (I18N.isRtl && I18N.isRtl(state.lang)) ? 'rtl' : 'ltr';
     html.setAttribute('data-page-lang', state.lang);
     html.setAttribute('data-ui-lang', state.lang.indexOf('zh') === 0 ? 'zh' : 'en');
     I18N.apply(state.lang, document);

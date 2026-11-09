@@ -710,3 +710,64 @@
     font-size: 15px;
   }
 }
+
+/* RTL (Arabic output) ---------------------------------------------------- */
+
+[dir="rtl"] .skip-link {
+  right: calc(12px + env(safe-area-inset-right));
+  left: auto;
+}
+
+[dir="rtl"] .brand-sub,
+[dir="rtl"] .phone-label,
+[dir="rtl"] .sms-preview-label,
+[dir="rtl"] .call-copy strong {
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .phone-text {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+[dir="rtl"] .plate-hero {
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .contact-watermark {
+  right: auto;
+  left: 10px;
+}
+
+[dir="rtl"] .owner-note {
+  padding-right: 34px;
+  padding-left: 14px;
+  text-align: right;
+}
+
+[dir="rtl"] .owner-note svg {
+  right: 13px;
+  left: auto;
+}
+
+[dir="rtl"] .call-button {
+  padding: 13px 14px 13px 18px;
+}
+
+[dir="rtl"] .call-copy {
+  text-align: right;
+}
+
+[dir="rtl"] .call-arrow {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .sms-preview-label {
+  margin-right: 0;
+  margin-left: 6px;
+}
+
+[dir="rtl"] .contact-footer-note a {
+  margin-left: 0;
+  margin-right: 4px;
+}

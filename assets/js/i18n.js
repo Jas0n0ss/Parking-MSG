@@ -14,7 +14,8 @@
     { code: 'es', label: 'Español' },
     { code: 'pt', label: 'Português' },
     { code: 'it', label: 'Italiano' },
-    { code: 'ru', label: 'Русский' }
+    { code: 'ru', label: 'Русский' },
+    { code: 'ar', label: 'العربية' }
   ];
 
   var DICT = {
@@ -97,6 +98,87 @@
       'vcard.prefix': 'Car owner',
       'vcard.note': 'Saved from a CarMsg parking tag · {plate}',
       'noscript': "Enable JavaScript to read the owner's contact details."
+    },
+
+    ar: {
+      'poster.brandSub': 'بطاقة مواقف · امسح للتواصل',
+      'poster.privacy': 'على جهازك فقط',
+      'poster.kicker': 'موقف مؤقت · امسح للتواصل',
+      'poster.ownerLabel': 'المالك: ',
+      'poster.ownerFallback': 'موقف مؤقت',
+      'poster.noteFallback': 'شكرًا لتفهّمك.',
+      'poster.action': 'امسح للتواصل مع المالك',
+      'poster.scanHint': 'امسح بأي تطبيق كاميرا',
+      'poster.footer': 'CarMsg · بطاقة مواقف / parking.404x.io',
+
+      'preview.chip': 'امسح للتواصل',
+      'preview.emptyTitle': 'بانتظار البيانات',
+      'preview.emptyBody': 'سيظهر رمز QR هنا',
+      'preview.platePlaceholder': 'لوحتك',
+      'preview.ownerFallback': 'المالك',
+      'preview.scan': 'امسح للتواصل مع المالك',
+      'preview.footer': 'لا تغطِّ اللوحة',
+      'preview.qrAria': 'رمز QR يحتوي على بيانات التواصل مع المالك',
+      'preview.plateAria': 'رمز QR للمواقف للوحة {plate}',
+
+      'print.kicker': 'موقف مؤقت · امسح للتواصل',
+      'print.ownerLabel': 'المالك: ',
+      'print.hint': 'امسح بأي تطبيق كاميرا، ثم اتصل بلمسة واحدة.',
+      'print.brand': 'CarMsg · بطاقة مواقف / parking.404x.io',
+      'print.tip': 'اقصص على طول الخط المتقطع. ضعها داخل الزجاج الأمامي في الأعلى جهة اليمين. لا تحجب الرؤية أو اللوحة.',
+      'print.noteFallback': 'موقف مؤقت. شكرًا لتفهّمك.',
+
+      'page.title': 'تواصل مع المالك · CarMsg',
+      'page.titleWithPlate': 'تواصل مع المالك · {plate} · CarMsg',
+      'page.description': 'تواصل مع مالك السيارة عبر بطاقة مواقف CarMsg. يبقى الرقم داخل الرابط ولا يمر عبر أي خادم.',
+      'page.skip': 'انتقل إلى التواصل',
+      'brand.sub': 'بطاقة مواقف',
+      'header.cta': 'أنشئ بطاقتي',
+      'header.ctaAria': 'أنشئ بطاقة المواقف الخاصة بي',
+      'header.home': 'الرئيسية',
+      'theme.dark': 'التبديل إلى الوضع الداكن',
+      'theme.light': 'التبديل إلى الوضع الفاتح',
+      'contact.sub': 'يرجى التواصل مع المالك في أقرب وقت ممكن.',
+      'contact.ownerLabel': 'المالك:',
+      'phone.label': 'هاتف المالك',
+      'phone.hint': 'مخفي جزئيًا لحماية الخصوصية',
+      'phone.show': 'إظهار الرقم كاملًا',
+      'phone.hide': 'إخفاء الرقم',
+      'call.title': 'اتصل بالمالك',
+      'call.sub': 'اضغط للاتصال مباشرة',
+      'actions.sms': 'رسالة نصية',
+      'actions.copy': 'نسخ الرقم',
+      'actions.vcard': 'حفظ جهة الاتصال',
+      'sms.head': 'رسالة سريعة',
+      'sms.hint': 'اختر واحدة وستُملأ تلقائيًا',
+      'sms.chip0': 'تسد سيارتي',
+      'sms.chip1': 'مكاني',
+      'sms.chip2': 'نافذة مفتوحة',
+      'sms.chip3': 'الأضواء مضاءة',
+      'sms.label': 'الرسالة',
+      'sms.templates': 'قوالب الرسائل',
+      'sms.t0': 'مرحبًا، سيارتك ({plate}) تسد سيارتي. هل يمكنك تحريكها؟ شكرًا!',
+      'sms.t1': 'مرحبًا، سيارتك ({plate}) متوقفة في مكاني. هل يمكنك تحريكها؟ شكرًا!',
+      'sms.t2': 'مرحبًا، يبدو أن نافذة سيارتك ({plate}) مفتوحة. يرجى التحقق عندما يمكنك.',
+      'sms.t3': 'مرحبًا، يبدو أن أضواء سيارتك ({plate}) مضاءة. للعلم فقط.',
+      'tips.strong': 'يرجى التعامل بلطف.',
+      'tips.text': 'قد يؤدي التحرش أو المكالمات المتكررة إلى مسؤولية قانونية. هذه المعلومات قدمها مالك السيارة.',
+      'footer.info': 'تبقى معلوماتك في الرابط ولا تمر عبر أي خادم',
+      'footer.cta': 'أنشئ بطاقة مجانية',
+      'footer.copy': '© {year} CarMsg · بطاقة مواقف / parking.404x.io',
+      'footer.privacy': 'الخصوصية',
+      'error.title': 'بطاقة المواقف هذه غير مكتملة',
+      'error.missing': 'قد يكون الرابط مبتورًا أو تنقصه اللوحة أو رقم الهاتف. يرجى الطلب من المالك إنشاء بطاقة جديدة.',
+      'error.invalid': 'اللوحة أو رقم الهاتف في هذا الرابط غير صالح. ربما نُسخ بشكل خاطئ.',
+      'error.cta': 'أنشئ بطاقتي',
+      'error.guide': 'كيف تضعها',
+      'error.docTitle': 'بطاقة مواقف غير صالحة · CarMsg',
+      'toast.copied': 'تم نسخ رقم الهاتف',
+      'toast.copyFail': 'تعذر النسخ. اضغط مع الاستمرار على الرقم لنسخه.',
+      'toast.vcard': 'تم تنزيل بطاقة جهة الاتصال',
+      'vcard.prefix': 'مالك السيارة',
+      'vcard.note': 'محفوظ من بطاقة مواقف CarMsg · {plate}',
+      'noscript': 'فعّل JavaScript لعرض بيانات التواصل مع المالك.'
     },
 
     'zh-Hans': {
@@ -1106,7 +1188,7 @@
 
     en: {
       'meta.title': 'CarMsg Parking Tag · Scan to contact the owner',
-      'meta.description': 'Free parking QR tags with global phone numbers and plates, in 11 languages. Scan to call or text the owner. No sign-up, no uploads.',
+      'meta.description': 'Free parking QR tags with global phone numbers and plates, in 12 languages including Arabic. Scan to call or text the owner. No sign-up, no uploads.',
       'ui.group': 'Interface language',
       'skip': 'Skip to the QR generator',
       'brand.sub': 'Parking QR tag',
@@ -1379,6 +1461,7 @@
     if (value.indexOf('pt') === 0) return 'pt';
     if (value.indexOf('it') === 0) return 'it';
     if (value.indexOf('ru') === 0) return 'ru';
+    if (value.indexOf('ar') === 0) return 'ar';
     if (value.indexOf('en') === 0) return 'en';
     return null;
   }
@@ -1439,6 +1522,10 @@
     return !!SUPPORTED[normalizeLang(code)];
   }
 
+  function isRtl(lang) {
+    return normalizeLang(lang) === 'ar';
+  }
+
   window.CarMsgI18N = {
     langs: LANGS,
     normalize: normalizeLang,
@@ -1450,6 +1537,7 @@
     siteLang: currentSiteLang,
     normalizeSite: normalizeSite,
     countryName: countryName,
-    isSupported: isSupported
+    isSupported: isSupported,
+    isRtl: isRtl
   };
 })();

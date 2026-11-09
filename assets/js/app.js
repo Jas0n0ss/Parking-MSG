@@ -727,6 +727,11 @@
   function applyLanguage() {
     state.resolvedLang = I18N.resolve(state.lang, state.plateCountry);
     I18N.apply(state.resolvedLang, document);
+    var rtl = I18N.isRtl ? I18N.isRtl(state.resolvedLang) : false;
+    els.tagCard.setAttribute('dir', rtl ? 'rtl' : 'ltr');
+    els.tagCard.setAttribute('lang', state.resolvedLang);
+    els.printSheet.setAttribute('dir', rtl ? 'rtl' : 'ltr');
+    els.printSheet.setAttribute('lang', state.resolvedLang);
     if (els.langSelect && els.langSelect.value !== state.lang) {
       els.langSelect.value = state.lang;
     }
