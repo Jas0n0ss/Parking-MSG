@@ -67,7 +67,7 @@ npx serve .
 
 当前使用 GitHub Pages + 自定义域名 `parking.404x.io`。推送到 `main` 后自动发布；页面资源使用相对路径。`404.html` 使用根路径资源，若部署到子目录需同步调整。
 
-修改 CSS / JS 后请递增 `sw.js` 中的 `CACHE_VERSION`（如 `carmsg-v9` → `carmsg-v10`），避免旧缓存长期生效。
+修改 CSS / JS 后请递增 `sw.js` 中的 `CACHE_VERSION`（如 `carmsg-v10` → `carmsg-v11`），避免旧缓存长期生效。
 
 ## 常用修改
 
