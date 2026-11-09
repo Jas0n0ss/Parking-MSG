@@ -81,6 +81,7 @@ npx serve .
 | 短信模板 | `assets/js/i18n.js` 的 `sms.t0`–`sms.t3` |
 | 车贴 PNG 排版 | `assets/js/qr-render.js` 的 `drawPoster()` |
 | 打印排版 | `assets/css/index.css` 的 `@media print` |
+| 首页开源数据图 | `index.html` 的 `#opensource` 区块（数值为发布时快照） |
 
 ## 兼容性
 
